@@ -5,8 +5,8 @@ import os
 os.chdir('/Users/hemant/projects/FSElastic/git/UI')
 password = os.getenv('ELASTIC_PASSWORD')
 app = Flask(__name__)
-es = Elasticsearch('https://localhost:9200',basic_auth=("elastic","W3lcomeAA**"),verify_certs=False)
-# es = Elasticsearch('https://elastic:W3lcomeAA**@localhost:9200',verify_certs=False)
+es = Elasticsearch('https://localhost:9200',basic_auth=("user","pass"),verify_certs=False)
+# es = Elasticsearch('https://user:pass@localhost:9200',verify_certs=False)
 
 
 @app.route('/')
