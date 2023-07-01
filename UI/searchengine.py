@@ -2,11 +2,11 @@ from flask import Flask, render_template, request
 from elasticsearch import Elasticsearch
 import os
 
-os.chdir('/Users/hemant/projects/FSElastic/git/UI')
-password = os.getenv('ELASTIC_PASSWORD')
+os.chdir('/Users/hemant/projects/elasticfscrawler/UI')
+password = os.getenv('ELASTIC_PASSWORD',"W3lcomeAA**")
 app = Flask(__name__)
-es = Elasticsearch('https://localhost:9200',basic_auth=("user","pass"),verify_certs=False)
-# es = Elasticsearch('https://user:pass@localhost:9200',verify_certs=False)
+es = Elasticsearch('https://localhost:9200',basic_auth=("elastic",password),verify_certs=False)
+# es = Elasticsearch(f'https://elastic:{password}@localhost:9200',verify_certs=False)
 
 
 @app.route('/')

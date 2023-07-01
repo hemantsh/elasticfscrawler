@@ -2,7 +2,7 @@
 
 {% block body %}
 
-    <div class="container">
+    <div class="container-fluid">
         <div class="container p-4 my-4 bg-primary text-white text-center rounded" >
             <h2>Case Search</h2>
         </div>
@@ -17,7 +17,6 @@
             <h3>{{ res['hits']['total']['value'] }} results found for <em>"{{res['ST']}}" </em> </h3>
         </div>
         
-        <br />
         <table id="results" class="table table-hover ">
             <thead>
                 <tr>
