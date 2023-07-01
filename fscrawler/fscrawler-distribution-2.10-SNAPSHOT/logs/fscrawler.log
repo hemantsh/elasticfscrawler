@@ -1,0 +1,9 @@
+02:42:18,851 [32mINFO [m [f.p.e.c.f.c.BootstrapChecks] Memory [Free/Total=Percent]: HEAP [112.3mb/2gb=5.49%], RAM [16.8mb/8gb=0.21%], Swap [723.7mb/4gb=17.67%].
+02:42:19,218 [32mINFO [m [f.p.e.c.f.FsCrawlerImpl] Starting FS crawler
+02:42:19,219 [32mINFO [m [f.p.e.c.f.FsCrawlerImpl] FS crawler started in watch mode. It will run unless you stop it with CTRL+C.
+02:42:19,332 [33mWARN [m [f.p.e.c.f.c.ElasticsearchClient] We are not doing SSL verification. It's not recommended for production.
+02:42:20,120 [32mINFO [m [f.p.e.c.f.c.ElasticsearchClient] Elasticsearch Client connected to a node running version 8.8.1
+02:42:20,128 [33mWARN [m [f.p.e.c.f.c.ElasticsearchClient] We are not doing SSL verification. It's not recommended for production.
+02:42:20,188 [32mINFO [m [f.p.e.c.f.c.ElasticsearchClient] Elasticsearch Client connected to a node running version 8.8.1
+02:42:20,227 [32mINFO [m [f.p.e.c.f.FsParserAbstract] FS crawler started for [idx] for [/Users/hemant/Downloads] every [15m]
+02:42:20,435 [32mINFO [m [f.p.e.c.f.t.TikaInstance] OCR is disabled.

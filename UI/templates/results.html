@@ -1,0 +1,74 @@
+{% extends 'index.html' %}
+
+{% block body %}
+
+    <div class="container">
+        <div class="container p-4 my-4 bg-primary text-white text-center rounded" >
+            <h2>Case Search</h2>
+        </div>
+        <form id="search" action="/search/results" method="post">
+            <div class="row">
+                <div class="col"><input type="text" class="form-control" name="input" placeholder="Search" autofocus></div>        
+                <div class="col"><button type="submit" class="btn btn-primary">Search</button></div>
+            </div> 
+        </form>
+
+        <div>
+            <h3>{{ res['hits']['total']['value'] }} results found for <em>"{{res['ST']}}" </em> </h3>
+        </div>
+        
+        <br />
+        <table id="results" class="table table-hover ">
+            <thead>
+                <tr>
+                    <th>Year</th>
+                    <th>Case</th>
+                    <th class="no-sort">Summary</th>
+                    <th>Path</th>
+                    <th>Size</th>
+                </tr>
+            </thead>
+
+            
+            <tbody>
+                {% for hit in res['hits']['hits'] %}
+                <tr>
+                    <td>{{ hit['year'] }}</td>
+                    <td>{{ hit['case'] }}</td>
+                    <td id="{{loop.index}}" name="goodSummary"> {{ hit['good_summary']}} </td>
+                    <td> {{ hit['virtual'] }} </td>
+                    <td>{{ hit['_source']['file']['filesize'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            
+
+        </table>
+    </div>
+    
+    {% endblock %}
+
+    {% block scripts %}
+    <script  type="text/javascript">
+    
+        function populateText() {
+            var data = document.getElementsByName("goodSummary");
+            for (const item of data) {
+                item.innerHTML = item.textContent
+            }
+        }
+    
+        $(document).ready( function () {
+            $('#results').DataTable( {
+                "columnDefs": [ {
+                "targets"  : 'no-sort',
+                "orderable": false,
+                "order": []
+            }]
+        });
+        populateText();
+            
+        } );
+        
+    </script>
+    {% endblock scripts %}
