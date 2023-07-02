@@ -11,15 +11,17 @@ es = Elasticsearch('https://localhost:9200',basic_auth=("elastic",password),veri
 
 @app.route('/')
 def home():
-    return render_template('search.html')
+    return render_template('results.html')
 
 @app.route('/search/results', methods=['GET','POST'])
 def request_search():
+    
     search_term = request.form['input']
     res = es.search(
     index='idx',
     body={
     "query" : { "match_phrase": {"content": {"query": search_term, "slop": 1 } }},
+    "size" : 500,
     "highlight" : {"pre_tags" : ['<b>'] , "post_tags" : ["</b>"], "fields" : {"content":{}}}})
     # res['ST']=search_term
 
@@ -34,8 +36,9 @@ def request_search():
         tokens = hit['_source']['path']['real'].split("/")
         hit['year'] = tokens[1]
         hit['case'] = tokens[2]
+        hit['_source']['content'] = ""
         
-    return render_template('results.html', res=res)
+    return render_template('results.html', res=res, input=search_term)
                         
 if __name__ == '__main__':
     app.run('127.0.0.1', debug=True)

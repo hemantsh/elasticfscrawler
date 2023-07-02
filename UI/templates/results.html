@@ -6,18 +6,19 @@
         <div class="container p-4 my-4 bg-primary text-white text-center rounded" >
             <h2>Case Search</h2>
         </div>
-        <form id="search" action="/search/results" method="post">
-            <div class="row">
-                <div class="col"><input type="text" class="form-control" name="input" placeholder="Search" autofocus></div>        
-                <div class="col"><button type="submit" class="btn btn-primary">Search</button></div>
+        <form id="fm" action="/search/results" method="post">
+            <div class="row justify-content-center">
+                <div class="col-4"><input type="text" class="form-control" name="input" value="{{ input }}" placeholder="Search" autofocus></div>        
+                <div class="col-4"><button type="submit" class="btn btn-primary">Search</button></div>
             </div> 
         </form>
 
+        {% if res is defined %}
         <div>
-            <h3>{{ res['hits']['total']['value'] }} results found for <em>"{{res['ST']}}" </em> </h3>
+            <h3>{{ res['hits']['total']['value'] }} results found for "{{ input }}"</h3>
         </div>
-        
-        <table id="results" class="table table-hover ">
+        <hr>
+        <table id="results" class="table table-hover table-bordered">
             <thead>
                 <tr>
                     <th>Year</th>
@@ -43,6 +44,7 @@
             
 
         </table>
+        {% endif %}
     </div>
     
     {% endblock %}
@@ -58,15 +60,15 @@
         }
     
         $(document).ready( function () {
+            populateText();
+
             $('#results').DataTable( {
                 "columnDefs": [ {
-                "targets"  : 'no-sort',
-                "orderable": false,
-                "order": []
-            }]
-        });
-        populateText();
-            
+                    "targets"  : 'no-sort',
+                    "orderable": false,
+                    "order": []
+                }]
+            });
         } );
         
     </script>
