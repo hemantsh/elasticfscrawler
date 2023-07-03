@@ -13,19 +13,22 @@
             </div> 
         </form>
 
+        <div id="chart" style="width:100%; height:400px;"></div>
+
         {% if res is defined %}
         <div>
             <h3>{{ res['hits']['total']['value'] }} results found for "{{ input }}"</h3>
         </div>
         <hr>
-        <table id="results" class="table table-hover table-bordered">
-            <thead>
+        <table id="results" class="table table-striped table-bordered">
+            <thead class="table-dark">
                 <tr>
-                    <th>Year</th>
-                    <th>Case</th>
-                    <th class="no-sort">Summary</th>
-                    <th>Path</th>
-                    <th>Size</th>
+                    <th class="col-md-1">Year</th>
+                    <th class="col-md-1">Case</th>
+                    <th class="no-sort col-md-7">Summary</th>
+                    <th class="col-md-2">Path</th>
+                    <th class="col-md-1">Size</th>
+                    <th class="col-md-1">key</th>
                 </tr>
             </thead>
 
@@ -38,6 +41,7 @@
                     <td id="{{loop.index}}" name="goodSummary"> {{ hit['good_summary']}} </td>
                     <td> {{ hit['virtual'] }} </td>
                     <td>{{ hit['_source']['file']['filesize'] }}</td>
+                    <td>{{ hit['case'] }}###{{ hit['virtual'] }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -63,13 +67,60 @@
             populateText();
 
             $('#results').DataTable( {
-                "columnDefs": [ {
-                    "targets"  : 'no-sort',
-                    "orderable": false,
-                    "order": []
-                }]
+                "columnDefs": [ 
+                    {
+                        "targets"  : 'no-sort',
+                        "orderable": false,
+                        "order": []
+                    },
+                    {
+                        target: 5,
+                        visible: false,
+                    }
+                ]
             });
+
+            drawChart();
         } );
+
+        function drawChart() {
+            table = $("#results").DataTable();
+        
+            var counts = {};
+        
+            // Count the number of entries for each file
+            table
+                .column(5, { search: 'applied' })
+                .data()
+                .each(function (val) {       
+                    if (counts[val]) {
+                        counts[val] += 1;
+                    } else {
+                        counts[val] = 1;
+                    }
+                });
+        
+            // And map it to the format highcharts uses
+            var countMap = $.map(counts, function (val, key) {
+                key = key.split("###")[1];
+                return {
+                    name: key,
+                    y: val,
+                };
+            });
+        
+        var myChart = Highcharts.chart("chart", {
+            chart: {
+                type: "pie"
+            },
+            title: {
+                text: "Case to file"
+            },
+            series: [{
+                data: countMap
+            }]
+        });
+        }
         
     </script>
     {% endblock scripts %}
