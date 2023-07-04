@@ -8,7 +8,7 @@
         </div>
         <form id="fm" action="/search/results" method="post">
             <div class="row justify-content-center">
-                <div class="col-4"><input type="text" class="form-control" name="input" value="{{ input }}" placeholder="Search" autofocus></div>        
+                <div class="col-4"><input type="text" class="form-control" name="input" value="{{ input }}" placeholder="Enter search phrase" autofocus></div>        
                 <div class="col-4"><button type="submit" class="btn btn-primary">Search</button></div>
             </div> 
         </form>
@@ -26,7 +26,7 @@
                     <th class="col-md-1">Year</th>
                     <th class="col-md-1">Case</th>
                     <th class="no-sort col-md-7">Summary</th>
-                    <th class="col-md-2">Path</th>
+                    <th class="col-md-1">Path</th>
                     <th class="col-md-1">Size</th>
                     <th class="col-md-1">key</th>
                 </tr>
@@ -36,12 +36,12 @@
             <tbody>
                 {% for hit in res['hits']['hits'] %}
                 <tr>
-                    <td>{{ hit['year'] }}</td>
-                    <td>{{ hit['case'] }}</td>
-                    <td id="{{loop.index}}" name="goodSummary"> {{ hit['good_summary']}} </td>
-                    <td> {{ hit['virtual'] }} </td>
-                    <td>{{ hit['_source']['file']['filesize'] }}</td>
-                    <td>{{ hit['case'] }}###{{ hit['virtual'] }}</td>
+                    <td class="col-md-1">{{ hit['year'] }}</td>
+                    <td class="col-md-1">{{ hit['case'] }}</td>
+                    <td class="col-md-7" id="{{loop.index}}" name="goodSummary"> {{ hit['good_summary']}} </td>
+                    <td class="col-md-1"> {{ hit['virtual'] }} </td>
+                    <td class="col-md-1">{{ hit['_source']['file']['filesize'] }}</td>
+                    <td class="col-md-1">{{ hit['case'] }}###{{ hit['virtual'] }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -78,8 +78,6 @@
                         visible: false,
                     }
                 ],
-                scrollY: 500,
-                scrollX: true,
                 "language": {
                     "search": "Filter:",
                     "searchPlaceholder": "Enter filter text"

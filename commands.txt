@@ -1,5 +1,10 @@
 docker-compose up -d
 
+#install python packages
 python3 -m pip install Elasticsearch
 python3 -m pip install flask
+
+#Check version and other details on installed package versions
+python3 -m pip show Elasticsearch
+python3 -m pip show flask
 
