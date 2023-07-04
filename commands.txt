@@ -1,8 +1,17 @@
 docker-compose up -d
 
+
+
+#Generate requrment file from current packages installed
+pip freeze > requirements.txt
+
+
 #install python packages
 python3 -m pip install Elasticsearch
 python3 -m pip install flask
+pip install gunicorn
+pip freeze > requirements.txt
+
 
 #Check version and other details on installed package versions
 python3 -m pip show Elasticsearch
