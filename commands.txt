@@ -1,3 +1,4 @@
+docker-compose stop
 docker-compose up -d
 
 
@@ -16,4 +17,28 @@ pip freeze > requirements.txt
 #Check version and other details on installed package versions
 python3 -m pip show Elasticsearch
 python3 -m pip show flask
+
+
+
+===============
+cd UI
+ docker build -t flask .
+
+cd nginx
+ docker build -t nginx .
+
+$ docker images
+REPOSITORY   TAG       IMAGE ID       CREATED              SIZE
+flask        latest    f8b115c9b474   About a minute ago   1.02GB
+nginx        latest    43ea9b0a530a   6 minutes ago        18MB
+
+$ wsl -d docker-desktop
+sysctl -w vm.max_map_count=262144
+
+Alternatively you can change this for all containers on the host by adding 
+vm.max_map_count = 262144 line to /etc/sysctl.conf. Settings in this file are applied on boot.
+
+Cert error in ent seach\
+$ docker cp 1ff71cf8a3f5c6b736733823d3c2ed6173a32d011c0393da537b6ecb543f8f40:/usr/share/elasticsearch/config/certs/ca/ca.crt 
+
 
