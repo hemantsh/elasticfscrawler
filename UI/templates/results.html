@@ -13,9 +13,25 @@
             </div> 
         </form>
 
-        <div id="chart" style="width:100%; height:400px;"></div>
-
         {% if res is defined %}
+        <hr>
+        <div class="container"  style="height:220px; ">
+            <div class="row">
+                <div class="col" style="width:200px; height:200px; visibility: hidden;" id="chart1div">
+                    <canvas id="chart1"></canvas>
+                </div>
+                <div class="col"  style="width:200px; height:200px; visibility: hidden;" id="chart2div">
+                    <canvas id="chart2"></canvas>
+                </div>
+                <div class="col" style="width:200px; height:200px; visibility: hidden;" id="chart3div">
+                    <canvas id="chart3"></canvas>
+                </div>
+                <div class="col"  style="width:200px; height:200px; visibility: hidden;" id="chart4div">
+                    <canvas id="chart4"></canvas>
+                </div>
+            </div>
+        </div>
+
         <div>
             <h3>{{ res['hits']['total']['value'] }} results found for "{{ input }}"</h3>
         </div>
@@ -98,46 +114,81 @@
                 ]
             });
 
-            drawChart();
+            mychart();
         } );
 
-        function drawChart() {
-            table = $("#results").DataTable();
-        
-            var counts = {};
-        
-            // Count the number of entries for each file
+        function mychart() {
+            var casefiles = {};
+            var table = $('#results').DataTable();
             table
                 .column(5, { search: 'applied' })
                 .data()
-                .each(function (val) {       
-                    if (counts[val]) {
-                        counts[val] += 1;
+                .each(function (val) {    
+                    parts = val.split("###");  
+                    caseNum = parts[0]; 
+                    if (casefiles[caseNum]) {
+                        casefiles[caseNum].push( parts[1] );
                     } else {
-                        counts[val] = 1;
+                        casefiles[caseNum] = [];
+                        casefiles[caseNum].push( parts[1] );
                     }
                 });
-        
-            // And map it to the format highcharts uses
-            var countMap = $.map(counts, function (val, key) {
-                key = key.split("###")[1];
-                return {
-                    name: key,
-                    y: val,
-                };
+
+                casefiles['sharma'] = ["a","b","c"];
+                
+                var datasets = {};
+                
+
+                Object.keys(casefiles).forEach ( function(val) {
+                    datasets[val] = $.map(casefiles[val], function (value) {
+                
+                        return {
+                            name: value,
+                            y: 1,
+                        };
+                    });
+                });
+                
+                var i = 1;
+                Object.keys(datasets).forEach ( function( key) {
+                    charting(i, key, datasets[key]);
+                    i++;
+                });
+        }
+
+        function charting( index , caseid , dataset ) {
+            
+            const ctx = document.getElementById('chart'+index);
+            document.getElementById('chart'+index+'div').style.visibility = 'visible';
+            
+
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: dataset.map(row => row.name),
+                    datasets: [
+                    {
+                        label: caseid,
+                        data: dataset.map(row => row.y)
+                    }
+                    ]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            position: 'bottom',
+                            text: "Case: "+caseid
+                        },
+                        colors: {
+                            enabled: false
+                        }
+                    }
+                }
             });
-        
-        var myChart = Highcharts.chart("chart", {
-            chart: {
-                type: "pie"
-            },
-            title: {
-                text: "Case to file"
-            },
-            series: [{
-                data: countMap
-            }]
-        });
         }
         
     </script>
