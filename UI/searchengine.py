@@ -5,8 +5,8 @@ import os
 os.chdir('/Users/hemant/projects/elasticfscrawler/UI')
 password = os.getenv('ELASTIC_PASSWORD',"W3lcomeAA**")
 app = Flask(__name__)
-env_config = os.getenv("PROD_APP_SETTINGS", "config.DevelopmentConfig")
-app.config.from_object(env_config)
+# env_config = os.getenv("PROD_APP_SETTINGS", "config.DevelopmentConfig")
+# app.config.from_object(env_config)
 
 es = Elasticsearch('https://localhost:9200',basic_auth=("elastic",password),verify_certs=False)
 # es = Elasticsearch(f'https://elastic:{password}@localhost:9200',verify_certs=False)
@@ -44,4 +44,4 @@ def request_search():
     return render_template('results.html', res=res, input=search_term)
                         
 if __name__ == '__main__':
-    app.run('127.0.0.1', debug=True)
+    app.run('127.0.0.1',  debug=True)

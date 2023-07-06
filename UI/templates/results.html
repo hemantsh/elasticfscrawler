@@ -15,21 +15,49 @@
 
         {% if res is defined %}
         <hr>
-        <div class="container"  style="height:220px; ">
+        <div class="container overflow-scroll"  style="height:220px; ">
             <div class="row">
-                <div class="col" style="width:200px; height:200px; visibility: hidden;" id="chart1div">
+                <div class="col col-md-2" style="width:200px; height:200px; visibility: hidden;" id="chart1div">
                     <canvas id="chart1"></canvas>
                 </div>
-                <div class="col"  style="width:200px; height:200px; visibility: hidden;" id="chart2div">
+                <div class="col col-md-2"  style="width:200px; height:200px; visibility: hidden;" id="chart2div">
                     <canvas id="chart2"></canvas>
                 </div>
-                <div class="col" style="width:200px; height:200px; visibility: hidden;" id="chart3div">
+                <div class="col col-md-2" style="width:200px; height:200px; visibility: hidden;" id="chart3div">
                     <canvas id="chart3"></canvas>
                 </div>
-                <div class="col"  style="width:200px; height:200px; visibility: hidden;" id="chart4div">
+                <div class="col col-md-2"  style="width:200px; height:200px; visibility: hidden;" id="chart4div">
                     <canvas id="chart4"></canvas>
                 </div>
+                <div class="col col-md-2" style="width:200px; height:200px; visibility: visible;" id="chart5div">
+                    <canvas id="chart5"></canvas>
+                </div>
+                <div class="col col-md-2"  style="width:200px; height:200px; visibility: hidden;" id="chart6div">
+                    <canvas id="chart6"></canvas>
+                </div>
             </div>
+            <div class="row">
+                   
+                <div class="col col-md-2" style="width:200px; height:200px; visibility: hidden;" id="chart7div">
+                    <canvas id="chart7"></canvas>
+                </div>
+                <div class="col col-md-2"  style="width:200px; height:200px; visibility: hidden;" id="chart8div">
+                    <canvas id="chart8"></canvas>
+                </div>
+                <div class="col col-md-2" style="width:200px; height:200px; visibility: hidden;" id="chart9div">
+                    <canvas id="chart9"></canvas>
+                </div>
+                <div class="col col-md-2"  style="width:200px; height:200px; visibility: hidden;" id="chart10div">
+                    <canvas id="chart10"></canvas>
+                </div>
+                <div class="col col-md-2" style="width:200px; height:200px; visibility: hidden;" id="chart11div">
+                    <canvas id="chart11"></canvas>
+                </div>
+                <div class="col col-md-2"  style="width:200px; height:200px; visibility: hidden;" id="chart12div">
+                    <canvas id="chart12"></canvas>
+                </div>
+            </div>
+            
         </div>
 
         <div>
@@ -70,124 +98,21 @@
     {% endblock %}
 
     {% block scripts %}
-    <script  type="text/javascript">
+    <script type="text/javascript">
     
-        function populateText() {
-            var data = document.getElementsByName("goodSummary");
-            for (const item of data) {
-                item.innerHTML = item.textContent
-            }
-        }
-    
-        $(document).ready( function () {
-            populateText();
-
-            $('#results').DataTable( {
-                "columnDefs": [ 
-                    {
-                        "targets"  : 'no-sort',
-                        "orderable": false,
-                        "order": []
-                    },
-                    {
-                        target: 5,
-                        visible: false,
-                    }
-                ],
-                "language": {
-                    "search": "Filter:",
-                    "searchPlaceholder": "Enter filter text"
-                },
-
-                dom: 'Bfrtip',
-                buttons: [
-                    'pageLength',
-                    'copyHtml5',
-                    'excelHtml5',
-                    'csvHtml5',
-                    'pdfHtml5',
-                    'print'
-                ],
-                lengthMenu: [
-                    [ 10, 25, 50, 100, -1 ],
-                    [ '10 rows', '25 rows', '50 rows', '100 rows', 'Show all' ]
-                ]
-            });
-
-            mychart();
-        } );
-
-        function mychart() {
-            var casefiles = {};
-            var table = $('#results').DataTable();
-            table
-                .column(5, { search: 'applied' })
-                .data()
-                .each(function (val) {    
-                    parts = val.split("###");  
-                    caseNum = parts[0]; 
-                    if (casefiles[caseNum]) {
-                        casefiles[caseNum].push( parts[1] );
-                    } else {
-                        casefiles[caseNum] = [];
-                        casefiles[caseNum].push( parts[1] );
-                    }
-                });
-
-                var datasets = {};
-                
-
-                Object.keys(casefiles).forEach ( function(val) {
-                    datasets[val] = $.map(casefiles[val], function (value) {
-                
-                        return {
-                            name: value,
-                            y: 1,
-                        };
-                    });
-                });
-                
-                var i = 1;
-                Object.keys(datasets).forEach ( function( key) {
-                    charting(i, key, datasets[key]);
-                    i++;
-                });
-        }
-
-        function charting( index , caseid , dataset ) {
+        $(document).ready(function () {
             
-            const ctx = document.getElementById('chart'+index);
-            document.getElementById('chart'+index+'div').style.visibility = 'visible';
+            populateSummary();
+            configureDataTable();
+            var datasets = getChartDatasets();
             
-
-            new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: dataset.map(row => row.name),
-                    datasets: [
-                    {
-                        label: caseid,
-                        data: dataset.map(row => row.y)
-                    }
-                    ]
-                },
-                options: {
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        title: {
-                            display: true,
-                            position: 'bottom',
-                            text: "Case: "+caseid
-                        },
-                        colors: {
-                            enabled: false
-                        }
-                    }
-                }
+            var i = 1;
+            Object.keys(datasets).forEach(function (caseiD) {
+                drawChart(i, caseiD, datasets[caseiD]);
+                i++;
             });
-        }
+        });
         
     </script>
+
     {% endblock scripts %}
