@@ -105,6 +105,14 @@ function drawChart(index, caseid, dataset) {
                 },
                 colors: {
                     enabled: false
+                },
+                tooltip: {
+                    callbacks: {
+                        title: function (tooltipItems) {
+                          return tooltipItems[0].parsed.x;
+                        },
+                        label: function(data) {  return "" }
+                    }
                 }
             }
         }
