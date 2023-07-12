@@ -155,22 +155,6 @@ services:
       timeout: 10s
       retries: 120
 
-  app:
-    build: flask
-    volumes:
-      - app:/app
-    ports:      
-      - "8000:8000"
-    depends_on:
-      - enterprisesearch
-
-  proxy:
-    build: nginx
-    restart: always
-    ports:
-      - 80:80
-    depends_on:
-      - app
 
 volumes:
   certs:
@@ -181,4 +165,3 @@ volumes:
     driver: local
   kibanadata:
     driver: local
-  app:
