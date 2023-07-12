@@ -2,11 +2,23 @@ from flask import Flask, render_template, request
 from elasticsearch import Elasticsearch
 import os
 
-os.chdir('/srv')
-password = os.getenv('ELASTIC_PASSWORD',"W3lcomeAA**")
+from dotenv  import load_dotenv
+from pathlib import Path
+
+dotenv_path = Path('../.env')
+load_dotenv(dotenv_path=dotenv_path)
+
+dir = os.getenv('FLASK_APP_DIR')
+user = os.getenv('ELASTIC_USER')
+password = os.getenv('ELASTIC_PASSWORD')
+host = os.getenv('ELASTIC_HOST')
+indexName = os.getenv('INDEX_NAME')
+
+os.chdir('dir')
+
 app = Flask(__name__)
-es = Elasticsearch('https://localhost:9200',basic_auth=("elastic",password),verify_certs=False)
-#es = Elasticsearch(f'https://elastic:{password}@localhost:9200',verify_certs=False)
+es = Elasticsearch(host,basic_auth=(user,password),verify_certs=False)
+# es = Elasticsearch(f'https://{user}:{password}@localhost:9200',verify_certs=False)
 
 
 @app.route('/')
@@ -18,7 +30,7 @@ def request_search():
     
     search_term = request.form['input']
     res = es.search(
-    index='idx',
+    index= indexName,
     body={
     "query" : { "match_phrase": {"content": {"query": search_term, "slop": 1 } }},
     "size" : 500,
