@@ -57,6 +57,7 @@ def register():
     return render_template('register.html', countries=countries)
 
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -74,6 +75,9 @@ def search():
         search_query = request.form['input']
         user_id = request.form['userId']
         if user_id:
+
+            # Store search in Search table
+
             new_search = Search(user_id=user_id, search_query=search_query)
             db.session.add(new_search)
             db.session.commit()
@@ -97,7 +101,9 @@ def search():
             hit['case'] = tokens[2]
             hit['_source']['content'] = ""
 
+
         return render_template('results.html', res=res, input=search_query, user_id=user_id)  # Pass user_id to template
+
 
 @app.route('/home')
 def home():
