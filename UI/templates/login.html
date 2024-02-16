@@ -5,22 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Login</title>
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 
 <body>
     <div class="container mt-5">
-        <h2>User Login</h2>
+        <h2>User Login</h2><br /><br /> 
         <form action="/login" method="post">
             <div class="form-group">
-                <label for="userId">User ID:</label>
-                <input type="text" class="form-control" id="userId" name="userId" placeholder="Enter User ID">
+                <label for="userId">User Name</label><br />
+                <input type="text" class="form-control" id="userName" name="userName" placeholder="Enter User name">
             </div>
             <div class="form-group">
-                <label for="password
-
-">Password:</label>
+                <label for="password">Password:</label><br /> 
                 <input type="password" class="form-control" id="password" name="password" placeholder="Enter Password">
             </div>
             <button type="submit" class="btn btn-primary">Login</button>
