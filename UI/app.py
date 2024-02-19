@@ -56,6 +56,7 @@ def register():
     return render_template('register.html', countries=countries)
 
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -76,8 +77,17 @@ def login():
 
 @app.route('/search/results', methods=['POST'])
 def search():
-    search_query = request.form['input']
-    user_name =  session.get('username')
+    if request.method == 'POST':
+        search_query = request.form['input']
+        user_id = request.form['userId']
+        if user_id:
+
+            # Store search in Search table
+
+            new_search = Search(user_id=user_id, search_query=search_query)
+            db.session.add(new_search)
+            db.session.commit()
+        return redirect(url_for('home'))
 
     if not user_name:
         flash('You need to login first.', 'danger')
@@ -87,34 +97,11 @@ def search():
     db.session.add(new_search)
     db.session.commit()
 
-    flash('Elasticsearch search completed successfully!', 'success')
-    return render_template('results.html', input=search_query)
 
-    return render_template('results.html', input=search_query)
+        return render_template('results.html', res=res, input=search_query, user_id=user_id)  # Pass user_id to template
 
-    # return redirect(url_for('home'))
 
-    # Perform Elasticsearch search
-    # res = es.search(
-    #     index=indexName,
-    #     body={
-    #         "query": {"match_phrase": {"content": {"query": search_query, "slop": 1}}},
-    #         "size": 500,
-    #         "highlight": {"pre_tags": ['<b>'], "post_tags": ["</b>"], "fields": {"content": {}}}
-    #     })
-
-    # # Process search results
-    # for hit in res['hits']['hits']:
-    #     hit['good_summary'] = '….'.join(hit['highlight']['content'][1:])
-    #     hit['virtual'] = hit['_source']['path']['virtual']
-    #     tokens = hit['_source']['path']['real'].split("/")
-    #     hit['year'] = tokens[1]
-    #     hit['case'] = tokens[2]
-    #     hit['_source']['content'] = ""
-
-    
-
-@app.route('/home/')
+@app.route('/home')
 def home():
     return render_template('results.html')
 
