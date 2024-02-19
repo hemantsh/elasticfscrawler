@@ -24,3 +24,15 @@ Report Screen
 - Search button
 - Results in datatable with export buttons like case search screen
 - query (select * from usersearch where time > start_time and time < end_time)
+
+Case Search
+- Logout link - Only displayed if user is logged in
+- Login link - Only if user is not logged in
+- Create User link - Only to Admin
+- Report link - Only to Admin
+- /search and /results routes are only available to logged in user.
+- /report route will be available to admin user type
+
+Error page
+- Create a generic error page to show simple error and a link to go to home page
+  
