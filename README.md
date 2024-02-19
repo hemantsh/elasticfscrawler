@@ -21,4 +21,6 @@ Rules
 Report Screen
 - Start_time
 - End_time
+- Search button
+- Results in datatable with export buttons like case search screen
 - query (select * from usersearch where time > start_time and time < end_time)
