@@ -1,44 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Registration</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
-
-<body>
-
-    <div class="container mt-5">
-        <h2>User Registration</h2><br/><br/> 
-        <form action="/" method="post">
-            <div class="form-group">
-                <label for="firstName">First Name</label><br />
-                <input type="text" class="form-control" id="firstName" name="firstName" placeholder="Enter First Name">
-            </div>
-            <div>
-                <label for="lastName">Last Name</label><br />
-                <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Enter Last Name">
-            </div>
-            <div>
-                <label for="userName">User Name</label><br />
-                <input type="text" class="form-control" id="userName" name="userName"
-                    placeholder="Enter Your User Name">
-            </div>
-            <div class="form-group">
-                <label for="countries">Countries (comma-separated):</label><br/> 
-                <input type="text" class="form-control" id="countries" name="countries" placeholder="Enter countries">
-            </div>
-            <button type="submit" class="btn btn-primary" onclick="registerUser()">Register</button>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Registration</title>
+    </head>
+    <body>
+        <h1>Registration Page</h1>
+        <form action="/register" method="post">
+            <input type="text" name="email" placeholder="Email">
+            <input type="text" name="displayname" placeholder="Display Name">
+            <input type="password" name="password" placeholder="Password">
+            <input type="password" name="confirm_password" placeholder="Confirm Password">
+            <input type="text" name="countries" placeholder="Countries">
+            <button type="submit">Register</button>
         </form>
+        <div id="toast" style="display: none;"></div>
         <script>
-            function registerUser() {
-                alert('You have been registered and your details have been saved successfully.');
-            }
+            // Client-side validation and toast message handling
+            document.querySelector('form').onsubmit = function(e) {
+                e.preventDefault();
+                var form = e.target;
+                var formData = new FormData(form);
+                fetch('/register', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('toast').innerText = "You are successfully registered";
+                    } else {
+                        document.getElementById('toast').innerText = data.message;
+                    }
+                    document.getElementById('toast').style.display = 'block';
+                })
+                .catch(error => console.error('Error:', error));
+            };
         </script>
-        <p class="mt-3">Already have an account? <a href="/login">Login here</a></p>
-    </div>
+    <p>Already have an account? <a href="/login">Login here</a></p>
 </body>
-
 </html>
