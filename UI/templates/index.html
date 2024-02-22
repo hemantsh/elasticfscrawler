@@ -37,8 +37,10 @@
 <body>
     {% include "navigation.html" %}
 
-    {% block body %}
+    <div class="container">
+        <h4>Welcome, {{ displayname }}</h4>
 
+    {% block body %}
 
     {% endblock %}
 
