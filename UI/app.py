@@ -12,6 +12,7 @@ from dotenv  import load_dotenv
 from flask_login import current_user
 from pathlib import Path
 bcrypt = Bcrypt()
+from werkzeug.security import generate_password_hash
 
 dotenv_path = Path('../.env')
 User = Path('../sql_db/create_table')
@@ -32,13 +33,16 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:RKKanika_SinghalBiz4_@127.
 es = Elasticsearch(host,basic_auth=(user,password),verify_certs=False)
 db = SQLAlchemy(app)
 
+
+
+
 # Define User model
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), unique=True, nullable=False)
     displayname = db.Column(db.String(100), nullable=False)
     password = db.Column(db.String(100), nullable=False)  # Storing the encrypted password
-    is_admin = db.Column(db.Boolean, default=False)
+    is_admin = db.Column(db.Boolean, default=True)
     countries = db.Column(db.String(200), nullable=True)
 
     def set_password(self, password):
@@ -46,7 +50,7 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password, password)
-
+    
 
 # Define Search model
 class Search(db.Model):  
@@ -75,11 +79,6 @@ def load_user(user_id):
 def index():
     return redirect(url_for('login'))
 
-
-# @app.route('/home/')
-# @login_required
-# def home():
-#     return render_template('results.html', displayname=current_user.displayname)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -114,16 +113,24 @@ def register():
         flash('User registered successfully with email: {}'.format(email), 'success')
         return redirect(url_for('login'))
 
-    # GET request
-    if current_user.is_authenticated:
-        # User is logged in, pre-fill form fields
-        email = current_user.email
-        displayname = current_user.displayname
-        countries = current_user.countries
-        return render_template('register.html', title='My Profile', email=email, displayname=displayname, countries=countries, save_button=True)
-    else:
-        # User is not logged in, render registration form
-        return render_template('register.html', title='Registration')
+    # # GET request
+    # if current_user.is_authenticated:
+    #     # User is logged in, pre-fill form fields
+    #     email = current_user.email
+    #     displayname = current_user.displayname
+    #     countries = current_user.countries
+    #     return render_template('register.html')
+    # else:
+    #     # User is not logged in, render registration form
+    #     return render_template('register.html')
+    
+    
+    #     # GET request
+    # title = 'Registration'
+    # if current_user.is_authenticated:
+    #     title = 'My Profile'
+
+    return render_template('register.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -133,11 +140,13 @@ def login():
         password = request.form['password']
 
         user = User.query.filter_by(email=email).first()
-        
         if user and user.check_password(password):
             login_user(user)
-            flash('Login successful!', 'success')
-            return redirect(url_for('home'))
+            if user.is_admin:
+                return redirect(url_for('admin_home'))  # Redirect to admin homepage if user is admin
+            else:
+                flash('Login successful!', 'success')
+                return redirect(url_for('home'))
         else:
             flash('Invalid email or password. Please try again.', 'danger')
             return redirect(url_for('login'))
@@ -145,11 +154,12 @@ def login():
     return render_template('login.html')
 
 
+
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('login'))
 
 
 @app.route('/search/results', methods=['POST'])
@@ -178,7 +188,21 @@ def search():
 @app.route('/home/')
 @login_required
 def home():
-    return render_template('results.html', displayname=current_user.displayname)
+    return render_template('results.html')
+
+
+@app.route('/admin/home')
+@login_required
+def admin_home():
+    if not current_user.is_admin:
+        flash('Access denied. You are not an admin.', 'danger')
+        return redirect(url_for('home'))
+    return render_template('admin_home.html')
+
+
+@app.route('/admin/report')
+def report():
+    return render_template('generate_report.html')
     
 
 if __name__ == '__main__':
