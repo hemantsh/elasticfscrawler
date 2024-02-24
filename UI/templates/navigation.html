@@ -1,0 +1,20 @@
+<nav>
+  <div class="container p-4 my-4 bg-primary text-white text-center rounded">
+      <div class="row">
+          <div class="col col-md-2"><img src="/static/inl_logo_transp_bg.png" style="width: 160px;height: 100px;background: unset;"></div>
+          <div class="col col-md-8"><h2>Case Search</h2></div>
+          <div class="col col-md-2"><img src="/static/rss_logo.png" style="width: 100px;height: 100px;"></div>
+      </div>
+      <div class="row">
+          <div class="col col-md-9"></div>
+
+          {% if current_user.is_authenticated %}
+              {% if current_user.is_admin %}
+                  <div class="col col-md-1"><a href="{{ url_for('register') }}" class="link-dark">Create User</a></div>
+                  <div class="col col-md-1"><a href="{{ url_for('report') }}" class="link-dark">Report</a></div>
+                  {% endif %}
+                  <div class="col col-md-1"><a href="{{ url_for('register') }}" class="link-dark">Profile</a></div>
+              <div class="col col-md-1"><a href="{{ url_for('logout') }}" class="link-dark">Logout</a></div>
+      </div>
+  </div>
+</nav>

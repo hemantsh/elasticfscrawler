@@ -2,115 +2,126 @@
 
 {% block body %}
 
-    <div class="container-fluid">
-        
-        <form id="fm" action="/search/results" method="post">
-            <div class="row justify-content-center">
-                <div class="col-4"><input type="text" class="form-control" name="input" value="{{ input }}" placeholder="Enter search phrase" autofocus></div>        
-                <div class="col-4"><button type="submit" class="btn btn-primary">Search</button></div>
-            </div> 
-        </form>
+<div class="container-fluid">
 
-        {% if res is defined %}
-        <hr>
-        <div class="container overflow-scroll"  style="height:220px; ">
-            <div class="row">
-                <div class="col col-md-2" style="width:200px; height:200px; visibility: hidden;" id="chart1div">
-                    <canvas id="chart1"></canvas>
-                </div>
-                <div class="col col-md-2"  style="width:200px; height:200px; visibility: hidden;" id="chart2div">
-                    <canvas id="chart2"></canvas>
-                </div>
-                <div class="col col-md-2" style="width:200px; height:200px; visibility: hidden;" id="chart3div">
-                    <canvas id="chart3"></canvas>
-                </div>
-                <div class="col col-md-2"  style="width:200px; height:200px; visibility: hidden;" id="chart4div">
-                    <canvas id="chart4"></canvas>
-                </div>
-                <div class="col col-md-2" style="width:200px; height:200px; visibility: visible;" id="chart5div">
-                    <canvas id="chart5"></canvas>
-                </div>
-                <div class="col col-md-2"  style="width:200px; height:200px; visibility: hidden;" id="chart6div">
-                    <canvas id="chart6"></canvas>
-                </div>
+    <form id="fm" action="/search/results" method="post">
+        <div class="row justify-content-center">
+            <div class="col-4"><input type="text" class="form-control" name="input" value="{{ input }}"
+                    placeholder="Enter search phrase" autofocus></div>
+            <div class="col-4">
+                <button type="submit" class="btn btn-primary">Search</button>
             </div>
-            <div class="row">
-                   
-                <div class="col col-md-2" style="width:200px; height:200px; visibility: hidden;" id="chart7div">
-                    <canvas id="chart7"></canvas>
-                </div>
-                <div class="col col-md-2"  style="width:200px; height:200px; visibility: hidden;" id="chart8div">
-                    <canvas id="chart8"></canvas>
-                </div>
-                <div class="col col-md-2" style="width:200px; height:200px; visibility: hidden;" id="chart9div">
-                    <canvas id="chart9"></canvas>
-                </div>
-                <div class="col col-md-2"  style="width:200px; height:200px; visibility: hidden;" id="chart10div">
-                    <canvas id="chart10"></canvas>
-                </div>
-                <div class="col col-md-2" style="width:200px; height:200px; visibility: hidden;" id="chart11div">
-                    <canvas id="chart11"></canvas>
-                </div>
-                <div class="col col-md-2"  style="width:200px; height:200px; visibility: hidden;" id="chart12div">
-                    <canvas id="chart12"></canvas>
-                </div>
-            </div>
-            
+        </div><input type="hidden" name="userId" value="{{ user_id }}"></div>  <!-- Added hidden input for user ID -->
+</form>
+
+{% if res is defined %}
+<hr>
+<div class="container overflow-scroll" style="height:220px; ">
+    <div class="row">
+        <div class="col col-md-2" style="width:200px; height:200px; visibility: hidden;" id="chart1div">
+            <canvas id="chart1"></canvas>
         </div>
-
-        <div>
-            <h3>{{ res['hits']['total']['value'] }} results found for "{{ input }}"</h3>
+        <div class="col col-md-2" style="width:200px; height:200px; visibility: hidden;" id="chart2div">
+            <canvas id="chart2"></canvas>
         </div>
-        <hr>
-        <table id="results" class="table table-striped table-bordered">
-            <thead class="table-dark">
-                <tr>
-                    <th class="col-md-1">Year</th>
-                    <th class="col-md-1">Case</th>
-                    <th class="no-sort col-md-7">Summary</th>
-                    <th class="col-md-1">Path</th>
-                    <th class="col-md-1">Size</th>
-                    <th class="col-md-1">key</th>
-                </tr>
-            </thead>
-
-            
-            <tbody>
-                {% for hit in res['hits']['hits'] %}
-                <tr>
-                    <td class="col-md-1">{{ hit['year'] }}</td>
-                    <td class="col-md-1">{{ hit['case'] }}</td>
-                    <td class="col-md-7" id="{{loop.index}}" name="goodSummary"> {{ hit['good_summary']}} </td>
-                    <td class="col-md-1"> {{ hit['virtual'] }} </td>
-                    <td class="col-md-1">{{ hit['_source']['file']['filesize'] }}</td>
-                    <td class="col-md-1">{{ hit['case'] }}###{{ hit['virtual'] }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-            
-
-        </table>
-        {% endif %}
+        <div class="col col-md-2" style="width:200px; height:200px; visibility: hidden;" id="chart3div">
+            <canvas id="chart3"></canvas>
+        </div>
+        <div class="col col-md-2" style="width:200px; height:200px; visibility: hidden;" id="chart4div">
+            <canvas id="chart4"></canvas>
+        </div>
+        <div class="col col-md-2" style="width:200px; height:200px; visibility: visible;" id="chart5div">
+            <canvas id="chart5"></canvas>
+        </div>
+        <div class="col col-md-2" style="width:200px; height:200px; visibility: hidden;" id="chart6div">
+            <canvas id="chart6"></canvas>
+        </div>
     </div>
-    
-    {% endblock %}
+    <div class="row">
 
-    {% block scripts %}
-    <script type="text/javascript">
-    
-        $(document).ready(function () {
-            
-            populateSummary();
-            configureDataTable();
-            var datasets = getChartDatasets();
-            
-            var i = 1;
-            Object.keys(datasets).forEach(function (caseiD) {
-                drawChart(i, caseiD, datasets[caseiD]);
-                i++;
-            });
+        <div class="col col-md-2" style="width:200px; height:200px; visibility: hidden;" id="chart7div">
+            <canvas id="chart7"></canvas>
+        </div>
+        <div class="col col-md-2" style="width:200px; height:200px; visibility: hidden;" id="chart8div">
+            <canvas id="chart8"></canvas>
+        </div>
+        <div class="col col-md-2" style="width:200px; height:200px; visibility: hidden;" id="chart9div">
+            <canvas id="chart9"></canvas>
+        </div>
+        <div class="col col-md-2" style="width:200px; height:200px; visibility: hidden;" id="chart10div">
+            <canvas id="chart10"></canvas>
+        </div>
+        <div class="col col-md-2" style="width:200px; height:200px; visibility: hidden;" id="chart11div">
+            <canvas id="chart11"></canvas>
+        </div>
+        <div class="col col-md-2" style="width:200px; height:200px; visibility: hidden;" id="chart12div">
+            <canvas id="chart12"></canvas>
+        </div>
+    </div>
+
+</div>
+
+<div>
+    <h3>{{ res['hits']['total']['value'] }} results found for "{{ input }}"</h3>
+</div>
+<hr>
+<table id="results" class="table table-striped table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th class="col-md-1">Year</th>
+            <th class="col-md-1">Case</th>
+            <th class="no-sort col-md-7">Summary</th>
+            <th class="col-md-1">Path</th>
+            <th class="col-md-1">Size</th>
+            <th class="col-md-1">key</th>
+        </tr>
+    </thead>
+</table>
+<tbody>
+    {% for hit in res['hits']['hits'] %}
+    <tr>
+        <td class="col-md-1">{{ hit['year'] }}</td>
+        <td class="col-md-1">{{ hit['case'] }}</td>
+        <td class="col-md-7" id="{{loop.index}}" name="goodSummary"> {{ hit['good_summary']}} </td>
+        <td class="col-md-1"> {{ hit['virtual'] }} </td>
+        <td class="col-md-1">{{ hit['_source']['file']['filesize'] }}</td>
+        <td class="col-md-1">{{ hit['case'] }}###{{ hit['virtual'] }}</td>
+    </tr>
+    {% endfor %}
+</tbody>
+
+
+</table>
+{% endif %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+    function captureSearch() {
+        var input = document.querySelector('input[name="input"]').value;
+        document.querySelector('input[name="searchQuery"]').value = input;
+        document.getElementById("searchForm").submit();
+    }
+</script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        populateSummary();
+        configureDataTable();
+        var datasets = getChartDatasets();
+
+        var i = 1;
+        Object.keys(datasets).forEach(function (caseiD) {
+            drawChart(i, caseiD, datasets[caseiD]);
+            i++;
         });
-        
-    </script>
+    });
 
-    {% endblock scripts %}
+</script>
+
+{% endblock scripts %}
