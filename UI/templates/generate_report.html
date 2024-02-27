@@ -1,19 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create New User</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Datepicker CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet">
-</head>
+{% extends 'index.html' %}
 
-<body>
+{% block body %}
+ 
 <div class="container">
-    <h1>Create New User</h1><br/>
-    <form id="reportForm">
+    <h1>Generate Report</h1><br/>
+    <form id="reportForm" action="/search/results" method="post">
         <div class="form-group">
             <label for="startDate">Start Date</label>
             <input type="text" class="form-control datepicker" id="startDate" name="startDate" placeholder="Select Start Date">
@@ -22,9 +13,13 @@
             <label for="endDate">End Date</label>
             <input type="text" class="form-control datepicker" id="endDate" name="endDate" placeholder="Select End Date">
         </div>
-        <button type="button" class="btn btn-primary" id="generateReport">Generate Report</button>
+        <button type="submit" class="btn btn-primary" id="generateReport">Generate Report</button>
     </form>
 </div>
+
+{% endblock %}
+
+{% block scripts %}
 
 <!-- Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -33,6 +28,8 @@
 <!-- Datepicker JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 <script>
+
+ 
     // Initialize datepicker
     $('.datepicker').datepicker({
         format: 'yyyy-mm-dd',
@@ -50,7 +47,9 @@
         console.log('End Date:', endDate);
         // You can make an AJAX call to the server to generate the report using the selected dates
     };
+
+
 </script>
 
-</body>
-</html>
+
+{% endblock scripts %}

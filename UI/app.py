@@ -162,27 +162,52 @@ def logout():
     return redirect(url_for('login'))
 
 
+# @app.route('/search/results', methods=['POST'])
+# @login_required
+# def search():
+#     if request.method == 'POST':
+#         search_query = request.form['input']
+#         user_id = request.form['userId']
+#         if user_id:
+#             new_search = Search(user_id=user_id, search_query=search_query)
+#             db.session.add(new_search)
+#             db.session.commit()
+#         return redirect(url_for('home'))
+
+#     if not user_name:
+#         flash('You need to login first.', 'danger')
+#         return redirect(url_for('login'))
+
+#     new_search = Search(user_name=user_name, search_query=search_query)
+#     db.session.add(new_search)
+#     db.session.commit()
+
+#     return render_template('results.html', res=res, input=search_query, user_id=user_id)  
+
+
 @app.route('/search/results', methods=['POST'])
 @login_required
 def search():
     if request.method == 'POST':
         search_query = request.form['input']
-        user_id = request.form['userId']
-        if user_id:
-            new_search = Search(user_id=user_id, search_query=search_query)
-            db.session.add(new_search)
-            db.session.commit()
-        return redirect(url_for('home'))
-
-    if not user_name:
-        flash('You need to login first.', 'danger')
-        return redirect(url_for('login'))
-
-    new_search = Search(user_name=user_name, search_query=search_query)
-    db.session.add(new_search)
-    db.session.commit()
-
-    return render_template('results.html', res=res, input=search_query, user_id=user_id)  
+        email = current_user.email
+        new_search = Search(email=email, search_query=search_query)
+        db.session.add(new_search)
+        db.session.commit()
+        
+        # Retrieve the selected start and end dates from the form
+        start_date = request.form['startDate']
+        end_date = request.form['endDate']
+        
+        # Query the database for search queries between the selected dates
+        search_queries = Search.query.filter(Search.timestamp.between(start_date, end_date)).all()
+        
+        # Log the search queries to the console
+        for query in search_queries:
+            print("Search Query:", query.search_query)
+        
+        # Render the results template with the search query
+        return render_template('results.html', input=search_query)
 
 
 @app.route('/home/')
