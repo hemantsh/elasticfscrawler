@@ -14,7 +14,6 @@ from pathlib import Path
 bcrypt = Bcrypt()
 from werkzeug.security import generate_password_hash
 
-
 dotenv_path = Path('../.env')
 User = Path('../sql_db/create_table')
 Search = Path('../sql_db/create_table')
@@ -34,13 +33,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:RKKanika_SinghalBiz4_@127.
 es = Elasticsearch(host,basic_auth=(user,password),verify_certs=False)
 db = SQLAlchemy(app)
 
-
 # Define User model
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), unique=True, nullable=False)
     displayname = db.Column(db.String(100), nullable=False)
-    password = db.Column(db.String(100), nullable=False)  # Storing the encrypted password
+    password = db.Column(db.String(100), nullable=False)  
     is_admin = db.Column(db.Boolean, default=False)
     countries = db.Column(db.String(200), nullable=True)
 
@@ -50,29 +48,22 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password, password)
     
- 
-# Define Search model
 class Search(db.Model):  
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    search_query = db.Column(db.String(255))
+    search_query = db.Column(db.String(255), nullable=False)
 
-
-# Initialize login manager
 login_manager = LoginManager()
 login_manager.init_app(app)
-
 
 @login_manager.user_loader
 def load_user(user_id): 
    return User.query.get(int(user_id))
 
-
 @app.route('/')
 def index():
     return redirect(url_for('login'))
-
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -90,17 +81,14 @@ def register():
             return redirect(url_for('register'))
 
         if current_user.is_authenticated:
-            # User is logged in, update profile
             current_user.email = email
             current_user.displayname = displayname
             current_user.set_password(password)
             current_user.countries = countries
             db.session.commit()
             flash('Your profile has been updated successfully!', 'success')
-            return redirect(url_for('login'))  # Redirect to login after profile update
+            return redirect(url_for('login'))   
         
-
-        # User is not logged in, create new user
         new_user = User(email=email, displayname=displayname, countries=countries)
         new_user.set_password(password)
         db.session.add(new_user)
@@ -110,7 +98,6 @@ def register():
         return redirect(url_for('login'))
 
     return render_template('register.html')
-
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -132,7 +119,6 @@ def login():
     return render_template('login.html')
 
 
-
 @app.route('/logout')
 @login_required
 def logout():
@@ -150,7 +136,6 @@ def search():
         db.session.add(new_search)
         db.session.commit()
         return render_template('results.html', input=search_query)
-         
     return redirect(url_for('home'))
 
     # Perform Elasticsearch search
@@ -184,20 +169,11 @@ def report():
     if request.method == 'POST':
         start_date = datetime.strptime(request.form['start_date'], '%Y-%m-%d')
         end_date = datetime.strptime(request.form['end_date'], '%Y-%m-%d')
-
-        # Query the database for search queries between start_date and end_date
         search_queries = Search.query.filter(Search.timestamp >= start_date, Search.timestamp <= end_date).all()
-
-        # Console the search queries along with dates
-        for query in search_queries:
-            print(f"Date: {query.timestamp}, Search Query: {query.search_query}")
-
-        # Render the template with the search queries
-        return render_template('generate_report.html', search_queries=search_queries)
-
+        return render_template('report.html', search_queries=search_queries)
     return render_template('generate_report.html')
-    
-
+ 
+ 
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()  # Create all database tables
@@ -205,4 +181,6 @@ if __name__ == '__main__':
     app.run('127.0.0.1', debug=True)
 
 
+
+ 
  
