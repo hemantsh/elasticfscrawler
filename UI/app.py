@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session, jsonify, current_app
-from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
@@ -7,12 +6,14 @@ from elasticsearch import Elasticsearch
 import os
 import pycountry
 from flask_bcrypt import Bcrypt
+from flask_sqlalchemy import SQLAlchemy
 
 from dotenv  import load_dotenv
 from flask_login import current_user
 from pathlib import Path
 bcrypt = Bcrypt()
 from werkzeug.security import generate_password_hash
+
 
 dotenv_path = Path('../.env')
 User = Path('../sql_db/create_table')
@@ -29,11 +30,9 @@ indexName = os.getenv('INDEX_NAME')
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:RKKanika_SinghalBiz4_@127.0.0.1/elasticsearch21' 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:RKKanika_SinghalBiz4_@127.0.0.1/elasticsearch27' 
 es = Elasticsearch(host,basic_auth=(user,password),verify_certs=False)
 db = SQLAlchemy(app)
-
-
 
 
 # Define User model
@@ -42,7 +41,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False)
     displayname = db.Column(db.String(100), nullable=False)
     password = db.Column(db.String(100), nullable=False)  # Storing the encrypted password
-    is_admin = db.Column(db.Boolean, default=True)
+    is_admin = db.Column(db.Boolean, default=False)
     countries = db.Column(db.String(200), nullable=True)
 
     def set_password(self, password):
@@ -51,11 +50,11 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password, password)
     
-
+ 
 # Define Search model
 class Search(db.Model):  
     id = db.Column(db.Integer, primary_key=True)
-    user_name = db.Column(db.String(50))
+    email = db.Column(db.String(100), nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     search_query = db.Column(db.String(255))
 
@@ -65,14 +64,9 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 
-# @login_manager.user_loader
-# def load_user(email):
-#     return User.query.filter_by(email=email).first()
-
-
 @login_manager.user_loader
 def load_user(user_id): 
-    return User.query.get(int(user_id))
+   return User.query.get(int(user_id))
 
 
 @app.route('/')
@@ -82,6 +76,8 @@ def index():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    print ( request.args.get('create_user'), ">>>>>>>>>" )
+    
     if request.method == 'POST':
         email = request.form['email']
         displayname = request.form['displayname']
@@ -113,40 +109,22 @@ def register():
         flash('User registered successfully with email: {}'.format(email), 'success')
         return redirect(url_for('login'))
 
-    # # GET request
-    # if current_user.is_authenticated:
-    #     # User is logged in, pre-fill form fields
-    #     email = current_user.email
-    #     displayname = current_user.displayname
-    #     countries = current_user.countries
-    #     return render_template('register.html')
-    # else:
-    #     # User is not logged in, render registration form
-    #     return render_template('register.html')
-    
-    
-    #     # GET request
-    # title = 'Registration'
-    # if current_user.is_authenticated:
-    #     title = 'My Profile'
-
     return render_template('register.html')
+
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    
     if request.method == 'POST':
+        print ( "Inside request = post" )
         email = request.form['email']
         password = request.form['password']
 
         user = User.query.filter_by(email=email).first()
         if user and user.check_password(password):
             login_user(user)
-            if user.is_admin:
-                return redirect(url_for('admin_home'))  # Redirect to admin homepage if user is admin
-            else:
-                flash('Login successful!', 'success')
-                return redirect(url_for('home'))
+            return redirect(url_for('home'))
         else:
             flash('Invalid email or password. Please try again.', 'danger')
             return redirect(url_for('login'))
@@ -162,29 +140,6 @@ def logout():
     return redirect(url_for('login'))
 
 
-# @app.route('/search/results', methods=['POST'])
-# @login_required
-# def search():
-#     if request.method == 'POST':
-#         search_query = request.form['input']
-#         user_id = request.form['userId']
-#         if user_id:
-#             new_search = Search(user_id=user_id, search_query=search_query)
-#             db.session.add(new_search)
-#             db.session.commit()
-#         return redirect(url_for('home'))
-
-#     if not user_name:
-#         flash('You need to login first.', 'danger')
-#         return redirect(url_for('login'))
-
-#     new_search = Search(user_name=user_name, search_query=search_query)
-#     db.session.add(new_search)
-#     db.session.commit()
-
-#     return render_template('results.html', res=res, input=search_query, user_id=user_id)  
-
-
 @app.route('/search/results', methods=['POST'])
 @login_required
 def search():
@@ -194,20 +149,27 @@ def search():
         new_search = Search(email=email, search_query=search_query)
         db.session.add(new_search)
         db.session.commit()
-        
-        # Retrieve the selected start and end dates from the form
-        start_date = request.form['startDate']
-        end_date = request.form['endDate']
-        
-        # Query the database for search queries between the selected dates
-        search_queries = Search.query.filter(Search.timestamp.between(start_date, end_date)).all()
-        
-        # Log the search queries to the console
-        for query in search_queries:
-            print("Search Query:", query.search_query)
-        
-        # Render the results template with the search query
         return render_template('results.html', input=search_query)
+         
+    return redirect(url_for('home'))
+
+    # Perform Elasticsearch search
+    # res = es.search(
+    #     index=indexName,
+    #     body={
+    #         "query": {"match_phrase": {"content": {"query": search_query, "slop": 1}}},
+    #         "size": 500,
+    #         "highlight": {"pre_tags": ['<b>'], "post_tags": ["</b>"], "fields": {"content": {}}}
+    #     })
+
+    # # Process search results
+    # for hit in res['hits']['hits']:
+    #     hit['good_summary'] = '….'.join(hit['highlight']['content'][1:])
+    #     hit['virtual'] = hit['_source']['path']['virtual']
+    #     tokens = hit['_source']['path']['real'].split("/")
+    #     hit['year'] = tokens[1]
+    #     hit['case'] = tokens[2]
+    #     hit['_source']['content'] = ""
 
 
 @app.route('/home/')
@@ -216,17 +178,23 @@ def home():
     return render_template('results.html')
 
 
-@app.route('/admin/home')
+@app.route('/admin/report', methods=['GET', 'POST'])
 @login_required
-def admin_home():
-    if not current_user.is_admin:
-        flash('Access denied. You are not an admin.', 'danger')
-        return redirect(url_for('home'))
-    return render_template('admin_home.html')
-
-
-@app.route('/admin/report')
 def report():
+    if request.method == 'POST':
+        start_date = datetime.strptime(request.form['start_date'], '%Y-%m-%d')
+        end_date = datetime.strptime(request.form['end_date'], '%Y-%m-%d')
+
+        # Query the database for search queries between start_date and end_date
+        search_queries = Search.query.filter(Search.timestamp >= start_date, Search.timestamp <= end_date).all()
+
+        # Console the search queries along with dates
+        for query in search_queries:
+            print(f"Date: {query.timestamp}, Search Query: {query.search_query}")
+
+        # Render the template with the search queries
+        return render_template('generate_report.html', search_queries=search_queries)
+
     return render_template('generate_report.html')
     
 
@@ -236,3 +204,5 @@ if __name__ == '__main__':
     app.secret_key = 'supersecretkey'  # Secret key for flashing messages
     app.run('127.0.0.1', debug=True)
 
+
+ 

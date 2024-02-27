@@ -1,107 +1,96 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        {% if current_user %}
+    {% extends 'index.html' %}
+
+    {% block body %}
+    
+    
+    <div class="container">
+        {% if current_user.is_authenticated %}
             {% if current_user.is_admin %}
-                Create New User
+                <h1>Create New User</h1><br/>
             {% else %}
-                My Profile
+                <h1>My Profile</h1><br/>
             {% endif %}
         {% else %}
-            Registration
+            <h1>Registration</h1><br/>
         {% endif %}
-    </title>
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-</head>
-
-<body>
-<div class="container">
-    {% if current_user %}
-        {% if current_user.is_admin %}
-            <h1>Create New User</h1><br/>
-        {% else %}
-            <h1>My Profile</h1><br/>
-        {% endif %}
-    {% else %}
-        <h1>Registration</h1><br/>
-    {% endif %}
-    <form id="registrationForm" action="/register" method="post">
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" class="form-control" id="email" name="email" placeholder="Email" {% if current_user and not current_user.is_admin %}value="{{ current_user.email }}"{% endif %}>
-        </div>
-        <div class="form-group">
-            <label for="displayname">Display Name</label>
-            <input type="text" class="form-control" id="displayname" name="displayname" placeholder="Display Name" {% if current_user and not current_user.is_admin %}value="{{ current_user.displayname }}"{% endif %}>
-        </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" class="form-control" id="password" name="password" placeholder="Password">
-        </div>
-        {% if not current_user %}
+        <form id="registrationForm" action="/register" method="post">
             <div class="form-group">
-                <label for="confirm_password">Confirm Password</label>
-                <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm Password">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Email" {% if current_user and not current_user.is_admin %} value="{{ current_user.email }}"{% endif %}>
             </div>
-        {% endif %}
-        <div class="form-group">
-            <label for="countries">Countries</label>
-            <input type="text" class="form-control" id="countries" name="countries" placeholder="Countries" {% if current_user and not current_user.is_admin %}value="{{ current_user.countries }}"{% endif %}>
-        </div>
-        {% if current_user and current_user.is_admin %}
-            <div class="form-check">
-                <input type="checkbox" class="form-check-input" id="make_admin" name="make_admin">
-                <label class="form-check-label" for="make_admin">Make Admin</label>
+            <div class="form-group">
+                <label for="displayname">Display Name</label>
+                <input type="text" class="form-control" id="displayname" name="displayname" placeholder="Display Name" {% if current_user and not current_user.is_admin %}value="{{ current_user.displayname }}"{% endif %}>
             </div>
-        {% endif %}
-        <br/>
-        <button type="submit" class="btn btn-primary">
-            {% if current_user %}
-                {% if current_user.is_admin %}
-                    Create User
-                {% else %}
-                    Save
-                {% endif %}
-            {% else %}
-                Register
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+            </div>
+            {% if not current_user %}
+                <div class="form-group">
+                    <label for="confirm_password">Confirm Password</label>
+                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm Password">
+                </div>
             {% endif %}
-        </button>
-    </form>
-    <div id="toast" style="display: none;"></div>
-    <br/>
-    <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
-</div>
-
-<!-- Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script>
-    // Client-side validation and toast message handling
-    document.getElementById('registrationForm').onsubmit = function(e) {
-        e.preventDefault();
-        var form = e.target;
-        var formData = new FormData(form);
-        fetch('/register', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                document.getElementById('toast').innerText = "You are successfully registered";
-            } else {
-                document.getElementById('toast').innerText = data.message;
-            }
-            document.getElementById('toast').style.display = 'block';
-        })
-        .catch(error => console.error('Error:', error));
-    };
-</script>
-
-</body>
-</html>
+            <div class="form-group">
+                <label for="countries">Countries</label>
+                <input type="text" class="form-control" id="countries" name="countries" placeholder="Countries" {% if current_user and not current_user.is_admin %} value="{{ current_user.countries }}"{% endif %}>
+            </div>
+            {% if current_user and current_user.is_admin %}
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="make_admin" name="make_admin">
+                    <label class="form-check-label" for="make_admin">Make Admin</label>
+                </div>
+            {% endif %}
+            <br/>
+            <button type="submit" class="btn btn-primary">
+                {% if current_user %}
+                    {% if current_user.is_admin %}
+                        Create User
+                    {% else %}
+                        Save
+                    {% endif %}
+                {% else %}
+                    Register
+                {% endif %}
+            </button>
+        </form>
+        <div id="toast" style="display: none;"></div>
+        <br/>
+        <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
+    </div>
+    
+    {% endblock %}
+    
+    {% block scripts %}
+    
+    <!-- Bootstrap JS -->
+    
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Client-side validation and toast message handling
+        document.getElementById('registrationForm').onsubmit = function(e) {
+            e.preventDefault();
+            var form = e.target;
+            var formData = new FormData(form);
+            fetch('/register', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('toast').innerText = "You are successfully registered";
+                } else {
+                    document.getElementById('toast').innerText = data.message;
+                }
+                document.getElementById('toast').style.display = 'block';
+            })
+            .catch(error => console.error('Error:', error));
+        };
+        </script>
+    
+    {% endblock scripts %}
