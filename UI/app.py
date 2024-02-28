@@ -3,7 +3,7 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, login_
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from elasticsearch import Elasticsearch 
-import os
+import os, time 
 import pycountry
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
@@ -67,13 +67,22 @@ def index():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    print ( request.args.get('create_user'), ">>>>>>>>>" )
-    
+    create_user = request.args.get('create_user')
+
     if request.method == 'POST':
         email = request.form['email']
         displayname = request.form['displayname']
         password = request.form['password']
-        countries = request.form['countries']
+        
+        # Check if 'countries' field is present in the form
+        countries = request.form.get('countries', None)
+        
+        # Check if confirm password field is present in the form
+        if 'confirm_password' in request.form:
+            confirm_password = request.form['confirm_password']
+            if password != confirm_password:
+                flash('Passwords do not match.')
+                return redirect(url_for('register'))
 
         user = User.query.filter_by(email=email).first()
         if user:
@@ -83,12 +92,14 @@ def register():
         if current_user.is_authenticated:
             current_user.email = email
             current_user.displayname = displayname
-            current_user.set_password(password)
-            current_user.countries = countries
+            if 'confirm_password' in request.form and password:
+                current_user.set_password(password)
+            if countries:
+                current_user.countries = countries
             db.session.commit()
             flash('Your profile has been updated successfully!', 'success')
-            return redirect(url_for('login'))   
-        
+            return redirect(url_for('login'))
+
         new_user = User(email=email, displayname=displayname, countries=countries)
         new_user.set_password(password)
         db.session.add(new_user)
@@ -97,7 +108,7 @@ def register():
         flash('User registered successfully with email: {}'.format(email), 'success')
         return redirect(url_for('login'))
 
-    return render_template('register.html')
+    return render_template('register.html', create_user=create_user)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -163,16 +174,21 @@ def home():
     return render_template('results.html')
 
 
-@app.route('/admin/report', methods=['GET', 'POST'])
+@app.route('/admin/report', methods=['POST'])
 @login_required
 def report():
-    if request.method == 'POST':
-        start_date = datetime.strptime(request.form['start_date'], '%Y-%m-%d')
-        end_date = datetime.strptime(request.form['end_date'], '%Y-%m-%d')
-        search_queries = Search.query.filter(Search.timestamp >= start_date, Search.timestamp <= end_date).all()
-        return render_template('report.html', search_queries=search_queries)
-    return render_template('generate_report.html')
- 
+    start_date = datetime.strptime(request.form['start_date'], '%Y-%m-%d')
+    end_date = datetime.strptime(request.form['end_date'], '%Y-%m-%d')
+    search_queries = Search.query.filter(Search.timestamp >= start_date, Search.timestamp <= end_date).all()
+    search_results = []
+    for query in search_queries:
+        search_results.append({
+            'timestamp': query.timestamp,
+            'email': query.email,
+            'search_query': query.search_query
+        })
+    return jsonify(search_results)
+
  
 if __name__ == '__main__':
     with app.app_context():
@@ -182,5 +198,4 @@ if __name__ == '__main__':
 
 
 
- 
  

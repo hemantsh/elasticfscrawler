@@ -1,96 +1,88 @@
-    {% extends 'index.html' %}
+{% extends 'index.html' %}
 
-    {% block body %}
-    
-    
-    <div class="container">
-        {% if current_user.is_authenticated %}
-            {% if current_user.is_admin %}
-                <h1>Create New User</h1><br/>
-            {% else %}
-                <h1>My Profile</h1><br/>
-            {% endif %}
-        {% else %}
-            <h1>Registration</h1><br/>
-        {% endif %}
+{% block body %}
+
+<div class="container">
+    {% if not current_user.is_authenticated %}
+        <h1>Registration Page</h1><br/>
         <form id="registrationForm" action="/register" method="post">
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" class="form-control" id="email" name="email" placeholder="Email" {% if current_user and not current_user.is_admin %} value="{{ current_user.email }}"{% endif %}>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Email">
             </div>
             <div class="form-group">
                 <label for="displayname">Display Name</label>
-                <input type="text" class="form-control" id="displayname" name="displayname" placeholder="Display Name" {% if current_user and not current_user.is_admin %}value="{{ current_user.displayname }}"{% endif %}>
+                <input type="text" class="form-control" id="displayname" name="displayname" placeholder="Display Name">
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
                 <input type="password" class="form-control" id="password" name="password" placeholder="Password">
             </div>
-            {% if not current_user %}
-                <div class="form-group">
-                    <label for="confirm_password">Confirm Password</label>
-                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm Password">
-                </div>
-            {% endif %}
             <div class="form-group">
                 <label for="countries">Countries</label>
-                <input type="text" class="form-control" id="countries" name="countries" placeholder="Countries" {% if current_user and not current_user.is_admin %} value="{{ current_user.countries }}"{% endif %}>
+                <input type="text" class="form-control" id="countries" name="countries" placeholder="Countries">
             </div>
-            {% if current_user and current_user.is_admin %}
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="make_admin" name="make_admin">
-                    <label class="form-check-label" for="make_admin">Make Admin</label>
-                </div>
-            {% endif %}
-            <br/>
-            <button type="submit" class="btn btn-primary">
-                {% if current_user %}
-                    {% if current_user.is_admin %}
-                        Create User
-                    {% else %}
-                        Save
-                    {% endif %}
-                {% else %}
-                    Register
-                {% endif %}
-            </button>
+            <button type="submit" class="btn btn-primary">Register</button>
         </form>
-        <div id="toast" style="display: none;"></div>
-        <br/>
-        <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
-    </div>
-    
-    {% endblock %}
-    
-    {% block scripts %}
-    
-    <!-- Bootstrap JS -->
-    
-    
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script>
-        // Client-side validation and toast message handling
-        document.getElementById('registrationForm').onsubmit = function(e) {
-            e.preventDefault();
-            var form = e.target;
-            var formData = new FormData(form);
-            fetch('/register', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    document.getElementById('toast').innerText = "You are successfully registered";
-                } else {
-                    document.getElementById('toast').innerText = data.message;
-                }
-                document.getElementById('toast').style.display = 'block';
-            })
-            .catch(error => console.error('Error:', error));
-        };
-        </script>
-    
-    {% endblock scripts %}
+    {% elif current_user and create_user %}
+        <h1>Create New User</h1><br/>
+        <form id="registrationForm" action="/register" method="post">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+            </div>
+            <div class="form-group">
+                <label for="displayname">Display Name</label>
+                <input type="text" class="form-control" id="displayname" name="displayname" placeholder="Display Name">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+            </div>
+            <div class="form-group">
+                <label for="countries">Countries</label>
+                <input type="text" class="form-control" id="countries" name="countries" placeholder="Countries">
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="make_admin" name="make_admin">
+                <label class="form-check-label" for="make_admin">Make Admin</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Create User</button>
+        </form>
+    {% elif current_user %}
+        <h1>My Profile</h1><br/>
+        <form id="registrationForm" action="/register" method="post">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Email" value="{{ current_user.email }}">
+            </div>
+            <div class="form-group">
+                <label for="displayname">Display Name</label>
+                <input type="text" class="form-control" id="displayname" name="displayname" placeholder="Display Name" value="{{ current_user.displayname }}">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+            </div>
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm Password">
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+    {% endif %}
+
+    <div id="toast" style="display: none;"></div>
+    <br/>
+    {% if not current_user.is_authenticated %}
+    <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock scripts %}
+
+show the 'User Table'
