@@ -11,8 +11,9 @@
             <div class="col-4">
                 <button type="submit" class="btn btn-primary">Search</button>
             </div>
-        </div><input type="hidden" name="userId" value="{{ user_id }}"></div>  <!-- Added hidden input for user ID -->
+        </div><input type="hidden" name="userId" value="{{ user_id }}"></div>  
 </form>
+
 
 {% if res is defined %}
 <hr>
@@ -66,6 +67,7 @@
 </div>
 <hr>
 <table id="results" class="table table-striped table-bordered">
+
     <thead class="table-dark">
         <tr>
             <th class="col-md-1">Year</th>

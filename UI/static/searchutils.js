@@ -186,3 +186,36 @@ function drawChart(index, caseid, dataset) {
     
     
 }
+
+
+
+function configurerReportTable() {
+    
+    $('#searchQueriesTable').DataTable({
+        "columnDefs": [
+            {
+                "targets": 'no-sort',
+                "orderable": false,
+                "order": []
+            }
+        ],
+        "language": {
+            "search": "Filter:",
+            "searchPlaceholder": "Enter filter text"
+        },
+
+        dom: 'Bfrtip',
+        buttons: [
+            'pageLength',
+            'copyHtml5',
+            'excelHtml5',
+            'csvHtml5',
+            'pdfHtml5',
+            'print'
+        ],
+        lengthMenu: [
+            [10, 25, 50, 100, -1],
+            ['10 rows', '25 rows', '50 rows', '100 rows', 'Show all']
+        ]
+    });
+}
