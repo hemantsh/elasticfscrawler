@@ -21,7 +21,6 @@ Search = Path('../sql_db/create_table')
 db = Path('../sql_db/create_table')
 load_dotenv(dotenv_path=dotenv_path)
 
-
 dir = os.getenv('FLASK_APP_DIR')
 user = os.getenv('ELASTIC_USER')
 password = os.getenv('ELASTIC_PASSWORD')
@@ -69,7 +68,6 @@ def index():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     create_user = request.args.get('create_user')
-    print ( request.args.get('create_user'), ">>>>>>>>>" )
     
     if request.method == 'POST':
         email = request.form['email']
@@ -106,7 +104,6 @@ def register():
 def login():
     
     if request.method == 'POST':
-        print ( "Inside request = post" )
         email = request.form['email']
         password = request.form['password']
 

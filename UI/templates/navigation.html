@@ -1,26 +1,25 @@
-{% if current_user.is_authenticated %}
+<div class="text-center"><img src="/static/rss_banner.jpeg" class="img-fluid" ></div>
 
-<nav>
-    <div class="container p-4 my-4 bg-primary text-white text-center rounded">
-        <div class="row">
-            <!-- <div class="col col-md-2"><img src="/static/inl_logo_transp_bg.png" style="width: 160px;height: 100px;background: unset;"></div> -->
-            <div class="col col-md-2"><img src="/static/INL_Logo_Transparent.gif" style="width: 100px;height: 100px;background: unset;"></div>
-            <div class="col col-md-8"><h2>Case Search</h2></div>
-            <div class="col col-md-2"><img src="/static/rss_logo.png" style="width: 100px;height: 100px;"></div>
-        </div>
+{% if current_user.is_authenticated %}
+<!-- <div class="col col-md-12"><img src="/static/INL_Logo_Transparent.gif" style="width: 100px;height: 100px;background: unset;"></div> -->
+
+<nav navbar navbar-dark bg-dark>
+    <div class="container p-4 my-4 bg-dark text-white text-center rounded">     
         <div class="row">  
 
             {% if current_user.is_authenticated %}
                 {% if current_user.is_admin %}
-                    <div class="col col-md-8"></div>
-                    <div class="col col-md-1"><a href="{{ url_for('register') }}?create_user=Y" class="link-dark">Create&nbsp;&nbsp;User</a></div>
-                    <div class="col col-md-1"><a href="{{ url_for('report') }}" class="link-dark">Report</a></div>
-                    <div class="col col-md-1"><a href="{{ url_for('register') }}" class="link-dark">Profile</a></div>
-                    <div class="col col-md-1"><a href="{{ url_for('logout') }}" class="link-dark">Logout</a></div>
+                    <div></div>
+                    <div class="col col-md-2"><a href="{{ url_for('register') }}?create_user=Y" class="link-light">Create&nbsp;&nbsp;User</a></div>
+                    <div class="col col-md-2"><a href="{{ url_for('home') }}" class="link-light">Search</a></div>
+                    <div class="col col-md-2"><a href="{{ url_for('report') }}" class="link-light">Report</a></div>                  
+                    <div class="col col-md-2"><a href="{{ url_for('register') }}" class="link-light">Profile</a></div>
+                    <div class="col col-md-2"><a href="{{ url_for('logout') }}" class="link-light">Logout</a></div>
                 {% else %}
-                    <div class="col col-md-10"></div>
-                    <div class="col col-md-1"><a href="{{ url_for('register') }}" class="link-dark">Profile</a></div>
-                    <div class="col col-md-1"><a href="{{ url_for('logout') }}" class="link-dark">Logout</a></div>
+                    <div></div>
+                    <div class="col col-md-2"><a href="{{ url_for('register') }}" class="link-light">Profile</a></div>
+                    <div class="col col-md-2"><a href="{{ url_for('home') }}" class="link-light">Search</a></div>
+                    <div class="col col-md-2"><a href="{{ url_for('logout') }}" class="link-light">Logout</a></div>
                     <div class="col col-md-1"></div>
                 {% endif %}
             {% endif %}
