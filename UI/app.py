@@ -178,14 +178,16 @@ def report():
                 'email': query.email,
                 'search_query': query.search_query
             })
-        return render_template('report.html', search_queries=search_results)
+        if len(search_results) <= 0:
+            flash ( "No results founds for entered criteria", "danger")
+        return render_template('report.html', search_queries=search_results, start_date=start_date, end_date=end_date )
     else:
-        return render_template('report.html', search_queries=[])
+        return render_template('report.html', search_queries=[], start_date='', end_date='')
 
- 
  
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()  # Create all database tables
     app.secret_key = 'supersecretkey'  # Secret key for flashing messages
     app.run('127.0.0.1', debug=True)
+    
