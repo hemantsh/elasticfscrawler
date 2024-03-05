@@ -3,104 +3,100 @@
 {% block body %}
 
 <div class="container">
+
     {% if not current_user.is_authenticated %}
     <br/><div class="text-center"><h1>Registration Page</h1></div>
-    <form id="registrationForm" action="/register" method="post" class="was-validated" novalidate>
+    <form id="registrationForm needs-validation" action="/register" method="post">
         <div class="form-group form-group-custom ">
             <label for="email">Email</label>
             <div class="input-wrapper">
-                <input type="email" class="form-control" id="email" name="email" placeholder="Email" required maxlength="32">
-                <p class="valid-feedback">Valid.</p>
-                <p class="invalid-feedback">Please enter a valid email address (max 32 characters).</p>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Email" required oninvalid="this.setCustomValidity('Please Enter a Valid Email address')">
             </div>
-            
         </div>
         <div class="form-group form-group-custom">
             <label for="displayname">Display Name</label>
-            <div class="input-wrapper">
-                <input type="text" class="form-control" id="displayname" name="displayname" placeholder="Display Name" required maxlength="32">
-                <p class="valid-feedback">Valid.</p>
-                <p class="invalid-feedback">Please enter a display name (max 32 characters).</p>
-            </div>
+                <input type="text" class="form-control" id="displayname" name="displayname" placeholder="Display Name" required maxlength="32" oninvalid="this.setCustomValidity('Please Enter a valid display Name')">
         </div>
         <div class="form-group form-group-custom">
             <label for="password">Password</label>
             <div class="input-wrapper">
-                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
-                <p class="valid-feedback">Valid.</p>
-                <p class="invalid-feedback">Please enter a password.</p>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required oninvalid="this.setCustomValidity('Please Enter the Password')">
             </div>
         </div>
         <div class="form-group form-group-custom">
             <label for="confirm_password">Confirm Password</label>
             <div class="input-wrapper">
-                <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required>
-                <p class="valid-feedback">Valid.</p>
-                <p class="invalid-feedback">Please confirm your password.</p>
+                <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required oninvalid="this.setCustomValidity('Please Confirm your password')">
             </div>
         </div>
-        <div class="form-group form-group-custom">
-            <div class="input-wrapper">
-                <label for="countries">Countries</label>
-                <input type="text" class="form-control" id="countries" name="countries" placeholder="Countries">
-
-            </div>
-        </div>
+    </div>
+    <div class="form-group form-group-custom">
+      <label for="countries">Countries</label>
+      <select class="selectpicker" multiple data-live-search="true" id="countries" name="countries">
+          {% for country_name, country_code in countries %}
+              <option value="{{ country_code }}">{{ country_name }}</option>
+          {% endfor %}
+      </select>
+  </div>
         <button type="submit" class="btn btn-dark">Register</button>
     </form>
+    
+    
     {% elif current_user and create_user %}
         <br/><div class = "text-center"><h1>Create New User</h1></div>
-        <form id="registrationForm" action="/register" method="post" class="was-validated" >
+        <form id="registrationForm" action="/register" method="post" class="needs-validation" >
             <div class="form-group form-group-custom">
                 <label for="email">Email</label>
-                <input type="email" class="form-control" id="email" name="email" placeholder="Email" required maxlength="32">
-                <div class="valid-feedback">Valid.</div>
-                <div class="invalid-feedback">Please enter a display name (max 32 characters).</div>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Email" required oninvalid="this.setCustomValidity('Please Enter a Valid Email address')">
             </div>
             <div class="form-group form-group-custom">
                 <label for="displayname">Display Name</label>
-                <input type="text" class="form-control" id="displayname" name="displayname" placeholder="Display Name" required maxlength="32">
-                <div class="valid-feedback">Valid.</div>
-                <div class="invalid-feedback">Please enter a display name (max 32 characters).</div>
+                <input type="text" class="form-control" id="displayname" name="displayname" placeholder="Display Name" required oninvalid="this.setCustomValidity('Please Enter a valid display Name')">
             </div>
             <div class="form-group form-group-custom">
                 <label for="password">Password</label>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Password">
-                <div class="valid-feedback">Valid.</div>
-                <div class="invalid-feedback">Please enter a password.</div>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required oninvalid="this.setCustomValidity('Please Enter the Password')">
             </div>
-            <div class="form-group form-group-custom">
-            <div class="form-group form-group-custom">
-                <label for="countries">Countries</label>
-                <input type="text" class="form-control" id="countries" name="countries" placeholder="Countries">
+                  <div class="form-group form-group-custom">
+                    <label for="countries">Countries</label>
+                    <select class="selectpicker" multiple data-live-search="true" id="countries" name="countries">
+                        {% for country_name, country_code in countries %}
+                            <option value="{{ country_code }}">{{ country_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
             <div class="form-check">
                 <input type="checkbox" class="form-check-input" id="make_admin" name="make_admin">
                 <label class="form-check-label" for="make_admin">Make Admin</label>
-            </div>
+            </div><br/>
             <button type="submit" class="btn btn-dark">Create User</button>
         </form>
+
+
     {% elif current_user %}
     <br/><div class = "text-center"><h1>My Profile</h1></div>
-        <form id="registrationForm" action="/register" method="post" class="was-validated">
+        <form id="registrationForm" action="/register" method="post" class="needs-validation">
             <div class="form-group form-group-custom">
-                <label for="email">  Email</label>
+                <label for="email">Email</label>
                 <input type="email" class="form-control" id="email" name="email" placeholder="Email" value="{{ current_user.email }}"readonly >
             </div>
             <div class="form-group form-group-custom">
                 <label for="displayname">Display Name</label>
-                <input type="text" class="form-control" id="displayname" name="displayname" placeholder="Display Name" value="{{ current_user.displayname }}" required maxlength="32" >
-                <div class="valid-feedback">Valid.</div>
-                <div class="invalid-feedback">Please enter a display name (max 32 characters).</div>
+                <input type="text" class="form-control" id="displayname" name="displayname" placeholder="Display Name" value="{{ current_user.displayname }}" required maxlength="32" oninvalid="this.setCustomValidity('Please Enter a valid display Name')">
             </div>
             <div class="form-group form-group-custom">
                 <label for="password">Password</label>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required oninvalid="this.setCustomValidity('Please Enter the Password')">
             </div>
             <div class="form-group form-group-custom">
                 <label for="confirm_password">Confirm Password</label>
-                <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm Password">
+                <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required oninvalid="this.setCustomValidity('Please Confirm your password')">
             </div>
+        <div class="form-group form-group-custom"> 
+                <label for="countries">Countries</label>
+                <input type="text" class="form-control" id="countries" name="countries" placeholder="Countries" value="{{ current_user.countries }}" readonly><br/>
+                </div>
             <button type="submit" class="btn btn-dark">Save</button>
         </form>
     {% endif %}
