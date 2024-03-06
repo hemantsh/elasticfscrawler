@@ -7,7 +7,6 @@ import os, time
 import pycountry
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
-
 from dotenv  import load_dotenv
 from flask_login import current_user
 from pathlib import Path
@@ -32,7 +31,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:RKKanika_SinghalBiz4_@127.
 es = Elasticsearch(host,basic_auth=(user,password),verify_certs=False)
 db = SQLAlchemy(app)
 
-
+# 
 # Define User model
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -75,13 +74,32 @@ def register():
         email = request.form['email']
         displayname = request.form['displayname']
         password = request.form['password']
+        confirm_password = request.form['confirm_password']
         countries = request.form.getlist('countries')
+        make_admin = request.form.get('make_admin')
         country_str = ','.join(countries)
+        create_user = None
+         
+        if 'create_user' in request.form:
+            create_user = request.form['create_user']
+        
+        if create_user and 'Y' == create_user:
 
-        user = User.query.filter_by(email=email).first()
-        if user:
-            flash('Email address already exists.', 'error')
-            return redirect(url_for('register'))
+            user = User.query.filter_by(email=email).first()
+            if user:
+                flash('Email address already exists.', 'error')
+                return redirect(url_for('register'))
+            
+            if password != confirm_password:
+                flash('Password and Confirm Password do not match.', 'error')
+                return redirect(url_for('register'))
+            
+            new_user = User(email=email, displayname=displayname, countries=country_str, is_admin = make_admin == 'on')
+            new_user.set_password(password)
+            db.session.add(new_user)
+            db.session.commit()
+            flash('User registered successfully with email: {}'.format(email), 'success')
+            return redirect(url_for('login'))
 
         if current_user.is_authenticated:
             current_user.email = email
@@ -90,15 +108,8 @@ def register():
             current_user.countries = country_str
             db.session.commit()
             flash('Your profile has been updated successfully!', 'success')
-            return redirect(url_for('login'))   
-        
-        new_user = User(email=email, displayname=displayname, countries=country_list)
-        new_user.set_password(password)
-        db.session.add(new_user)
-        db.session.commit()
-
-        flash('User registered successfully with email: {}'.format(email), 'success')
-        return redirect(url_for('login'))
+            return redirect(url_for('login')) 
+           
 
     return render_template('register.html', create_user=create_user, countries=country_list)
 
@@ -141,11 +152,27 @@ def search():
             new_search = Search(email=email, search_query=search_query)
             db.session.add(new_search)
             db.session.commit()
-            flash('Search query "{}" submitted successfully.'.format(search_query), 'success')
         else:
             flash('Search query cannot be empty.', 'danger')
         return render_template('results.html', input=search_query)
     return redirect(url_for('home'))
+
+# @app.route('/search/results', methods=['POST'])
+# @login_required
+# def search():
+#     if request.method == 'POST':
+#         search_query = request.form['input']
+#         if search_query.strip():  
+#             email = current_user.email
+#             new_search = Search(email=email, search_query=search_query)
+#             db.session.add(new_search)
+#             db.session.commit()
+#         else:
+#             flash('Search query cannot be empty.', 'danger')
+
+#         searches = Search.query.filter_by(email=current_user.email).order_by(Search.date.desc()).all()  # Updated this line
+#         return render_template('results.html', searches=searches, input=search_query)
+#     return redirect(url_for('home'))
 
 
     # Perform Elasticsearch search
@@ -180,7 +207,7 @@ def report():
     if request.method == 'POST':
         start_date = datetime.strptime(request.form['start_date'], '%Y-%m-%d')
         end_date = datetime.strptime(request.form['end_date'], '%Y-%m-%d')
-        search_queries = Search.query.filter(Search.timestamp >= start_date, Search.timestamp <= end_date , Search.activity_type == 'SEARCH').all()
+        search_queries = Search.query.filter(Search.timestamp >= start_date, Search.timestamp <= end_date , Search.activity_type == 'SEARCH').all() 
         search_results = []
         for query in search_queries:
             search_results.append({
@@ -201,7 +228,6 @@ if __name__ == '__main__':
     app.secret_key = 'supersecretkey'  # Secret key for flashing messages
     app.run('127.0.0.1', debug=True)
     
-
 
 
 
