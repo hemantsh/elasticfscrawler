@@ -11,10 +11,13 @@
             <label for="email">Email</label>
             <div class="input-wrapper">
                 <input type="email" class="form-control" id="email" name="email" placeholder="Email" required oninvalid="this.setCustomValidity('Please Enter a Valid Email address')" oninput="this.setCustomValidity('')"> 
+            </div>
         </div>
         <div class="form-group form-group-custom">
+            <div class="input-wrapper">
             <label for="displayname">Display Name</label>
                 <input type="text" class="form-control" id="displayname" name="displayname" placeholder="Display Name" required maxlength="32" oninvalid="this.setCustomValidity('Please Enter a valid display Name')" oninput="this.setCustomValidity('')">
+            </div>
         </div>
         <div class="form-group form-group-custom">
             <label for="password">Password</label>
@@ -28,7 +31,6 @@
                 <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required oninvalid="this.setCustomValidity('Please Confirm your password')" oninput="this.setCustomValidity('')">
             </div>
         </div>
-    </div>
     <div class="form-group form-group-custom">
       <label for="countries">Countries</label>
       <select class="selectpicker" multiple data-live-search="true" id="countries" name="countries">
@@ -36,94 +38,93 @@
               <option value="{{ country_code }}">{{ country_name }}</option>
           {% endfor %}
       </select>
-  </div>
+    </div>
+    </div>
         <button type="submit" class="btn btn-dark">Register</button>
     </form>
     
     
-    {% elif current_user and create_user %}
-        <br/><div class = "text-center"><h1>Create New User</h1></div>
+    {% elif current_user.is_admin and create_user %}
+        <div class = "text-center mt-2"><h1>Create New User</h1></div>
         <form id="registrationForm" action="/register" method="post" class="needs-validation" >
             <div class="form-group form-group-custom">
                 <label for="email">Email</label>
-                <input type="email" class="form-control" id="email" name="email" placeholder="Email" required oninvalid="this.setCustomValidity('Please Enter a Valid Email address')" oninput="this.setCustomValidity('')">
+                <input type="email" class="form-control mt-2" id="email" name="email" placeholder="Email" required oninvalid="this.setCustomValidity('Please Enter a Valid Email address')" oninput="this.setCustomValidity('')">
             </div>
-            <div class="form-group form-group-custom">
+            <div class="form-group form-group-custom mt-3">
                 <label for="displayname">Display Name</label>
-                <input type="text" class="form-control" id="displayname" name="displayname" placeholder="Display Name" required oninvalid="this.setCustomValidity('Please Enter a valid display Name')" oninput="this.setCustomValidity('')">
+                <input type="text" class="form-control mt-2" id="displayname" name="displayname" placeholder="Display Name" required oninvalid="this.setCustomValidity('Please Enter a valid display Name')" oninput="this.setCustomValidity('')">
             </div>
-            <div class="form-group form-group-custom">
+            <div class="form-group form-group-custom mt-3">
                 <label for="password">Password</label>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required oninvalid="this.setCustomValidity('Please Enter the Password')" oninput="this.setCustomValidity('')">
+                <input type="password" class="form-control mt-2" id="password" name="password" placeholder="Password" required oninvalid="this.setCustomValidity('Please Enter the Password')" oninput="this.setCustomValidity('')">
             </div>
-            <div class="form-group form-group-custom">
+            <div class="form-group form-group-custom mt-3">
                 <label for="confirm_password">Confirm Password</label>
-                <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required oninvalid="this.setCustomValidity('Please Confirm your Password')" oninput="this.setCustomValidity('')">
+                <input type="password" class="form-control mt-2" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required oninvalid="this.setCustomValidity('Please Confirm your Password')" oninput="this.setCustomValidity('')">
             </div>
-                  <div class="form-group form-group-custom">
+                  <div class="form-group form-group-custom mt-3">
+                    <div class="form-group form-group-custom ">
                     <label for="countries">Countries</label>
-                    <select class="selectpicker" multiple data-live-search="true" id="countries" name="countries">
+                    <select class = "mt-3" id="create_user_countries" name="countries" multiple="multiple">
                         {% for country_name, country_code in countries %}
                             <option value="{{ country_code }}">{{ country_name }}</option>
                         {% endfor %}
                     </select>
                 </div>
-            </div>
-            <div class="form-check">
+            <div class="form-check mt-3">
                 <input type="checkbox" class="form-check-input" id="make_admin" name="make_admin">
                 <label class="form-check-label" for="make_admin">Make Admin</label>
-            </div><br/>
+            </div>
             <input type = "hidden" name = "create_user" value = "Y"/> 
-            <button type="submit" class="btn btn-dark">Create User</button>
+            <button type="submit" class="btn btn-dark mt-3">Create User</button>
         </form>
+        </div>
 
 
     {% elif current_user %}
-    <br/><div class = "text-center"><h1>My Profile</h1></div>
+    <div class = "text-center mt-2"><h1>My Profile</h1></div>
         <form id="registrationForm" action="/register" method="post" class="needs-validation">
             <div class="form-group form-group-custom">
                 <label for="email">Email</label>
-                <input type="email" class="form-control" id="email" name="email" placeholder="Email" value="{{ current_user.email }}"readonly >
+                <input type="email" class="form-control mt-2" id="email" name="email" placeholder="Email" value="{{ current_user.email }}"readonly >
             </div>
-            <div class="form-group form-group-custom">
+            <div class="form-group form-group-custom mt-3">
                 <label for="displayname">Display Name</label>
-                <input type="text" class="form-control" id="displayname" name="displayname" placeholder="Display Name" value="{{ current_user.displayname }}" required maxlength="32">
+                <input type="text" class="form-control mt-2" id="displayname" name="displayname" placeholder="Display Name" value="{{ current_user.displayname }}" required maxlength="32">
             </div>
-            <div class="form-check form-group-custom">
+            <div class="form-check form-group-custom mt-3">
                 <input type="checkbox" class="form-check-input" id="change_password" name="change_password">
-                <label class="form-check-label" for="change_password">Change Password</label>
-            </div>
+                <label class="form-check-label" for="change_password">Change Password</label></div>
             <div id="password_fields" style="display: none;">
-                <div class="form-group form-group-custom">
+                <div class="form-group form-group-custom mt-3">
                     <label for="password">Password</label>
-                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" {% if not change_password_checked %}disabled{% endif %} required oninvalid="this.setCustomValidity('Please Enter a Password')" oninput="this.setCustomValidity('')">
+                    <input type="password" class="form-control mt-2" id="password" name="password" placeholder="Password" {% if not change_password_checked %}disabled{% endif %} required oninvalid="this.setCustomValidity('Please Enter a Password')" oninput="this.setCustomValidity('')">
                 </div>
-                <div class="form-group form-group-custom">
+                <div class="form-group form-group-custom mt-3">
                     <label for="confirm_password">Confirm Password</label>
-                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm Password" {% if not change_password_checked %}disabled{% endif %} required oninvalid="this.setCustomValidity('Please Confirm your Password')" oninput="this.setCustomValidity('')">
+                    <input type="password" class="form-control mt-2" id="confirm_password" name="confirm_password" placeholder="Confirm Password" {% if not change_password_checked %}disabled{% endif %} required oninvalid="this.setCustomValidity('Please Confirm your Password')" oninput="this.setCustomValidity('')">
                 </div>
             </div>
-            <div class="form-group form-group-custom"> 
+            <div class="form-group form-group-custom mt-3"> 
                 <label for="countries">Countries</label>
-                <input type="text" class="form-control" id="countries" name="countries" placeholder="Countries" value="{{ current_user.countries }}" readonly><br/>
+                <input type="text" class="form-control mt-2" id="countries" name="countries" placeholder="Countries" value="{{ current_user.countries }}" readonly><br/>
             </div>
             <button type="submit" class="btn btn-dark">Save</button>
             
+
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     var changePasswordCheckbox = document.getElementById('change_password');
-                    var passwordFields = document.getElementById('password_fields');
-            
-                    // Hide/show password fields based on checkbox state
+                    var passwordFields = document.getElementById('password_fields');         
+                  
                     changePasswordCheckbox.addEventListener('change', function() {
                         if (this.checked) {
                             passwordFields.style.display = 'block';
-                            // Enable password fields
                             document.getElementById('password').removeAttribute('disabled');
                             document.getElementById('confirm_password').removeAttribute('disabled');
-                        } else {
+                        } else { 
                             passwordFields.style.display = 'none';
-                            // Clear and disable password fields
                             document.getElementById('password').value = '';
                             document.getElementById('confirm_password').value = '';
                             document.getElementById('password').setAttribute('disabled', 'disabled');
@@ -131,12 +132,11 @@
                         }
                     });
             
-                    // Trigger change event initially if checkbox is checked
                     if (changePasswordCheckbox.checked) {
                         changePasswordCheckbox.dispatchEvent(new Event('change'));
                     }
                 });
-            </script>
+            </script> 
         </form>
     {% endif %}
 
@@ -145,13 +145,23 @@
     {% if not current_user.is_authenticated %}
     <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
     {% endif %}
-</div>
 
-{% endblock %}
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $('#create_user_countries').multiselect({
+        buttonClass: 'form-select',
+        templates: {
+        button: '<button type="button" class="multiselect dropdown-toggle" data-bs-toggle="dropdown"><span class="multiselect-selected-text"></span></button>',
+        }
+          });
+        });
+    </script>
 
-{% block scripts %}
+    {% endblock %}
 
-{% endblock scripts %}
+    {% block scripts %}
+
+    {% endblock scripts %}
 
 
 
