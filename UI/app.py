@@ -1,9 +1,8 @@
-
 from flask import Flask, render_template, request, flash, redirect, url_for, session, jsonify, current_app
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required
 from datetime import datetime
 from elasticsearch import Elasticsearch 
-import os, time 
+import os, time , json
 import pycountry
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
@@ -51,6 +50,12 @@ class Search(db.Model):
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     search_query = db.Column(db.String(255), nullable=False)
     activity_type = db.Column(db.String(300), default='SEARCH')
+    
+    
+def load_countries():
+    with open('countries.json', 'r') as f:
+        return json.load(f)
+
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -67,7 +72,7 @@ def index():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     create_user = request.args.get('create_user')
-    country_list = [(country.name, country.alpha_2) for country in pycountry.countries]
+    country_list = load_countries()
     
     if request.method == 'POST':
         email = request.form['email']
@@ -109,7 +114,7 @@ def register():
             current_user.countries = country_str
             db.session.commit()
             flash('Your profile has been updated successfully!', 'success')
-            return redirect(url_for('login')) 
+            return redirect(url_for('register')) 
 
     return render_template('register.html', create_user=create_user, countries=country_list)
 
@@ -208,7 +213,10 @@ def report():
  
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()  # Create all database tables
-    app.secret_key = 'supersecretkey'  # Secret key for flashing messages
+        db.create_all()  
+    app.secret_key = 'supersecretkey' 
     app.run('127.0.0.1', debug=True)
     
+
+
+
