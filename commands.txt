@@ -42,3 +42,34 @@ Cert error in ent seach\
 $ docker cp 1ff71cf8a3f5c6b736733823d3c2ed6173a32d011c0393da537b6ecb543f8f40:/usr/share/elasticsearch/config/certs/ca/ca.crt 
 
 
+=====
+
+Flask
+
+python3 /home/searchengine/elasticfscrawler/UI/searchengine.py 
+
+
+
+Crawler
+
+/home/searchengine/elasticfscrawler/fscrawler/fscrawler-distribution-2.10-SNAPSHOT/bin/fscrawler --username elastic --config_dir /home/searchengine/elasticfscrawler/fscrawler/fscrawler-distribution-2.10-SNAPSHOT/bin/fscrawler/config cases restart
+
+
+Elastic Services:
+
+docker-compose start elasticsearch -d -f /home/searchengine/elasticfscrawler/docker-compose.yaml
+docker-compose start kibana -d -f /home/searchengine/elasticfscrawler/docker-compose.yaml
+docker-compose start enterprisesearch -d -f /home/searchengine/elasticfscrawler/docker-compose.yaml
+
+DB:
+
+
+
+ls /var/snap/docker/common/var-lib-docker/volumes/elasticfscrawler_esdata/_data/
+indices  
+nodes  
+snapshot_cache  
+snapshots  
+_state
+
+
