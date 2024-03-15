@@ -36,25 +36,18 @@
     <table id="searchQueriesTable" class="table table-striped table-bordered">
         <thead class="table-dark">
             <tr>
-                <td>
-                    <div class="row">
-                        <div class="col-md-6 text-left">Date</div>
-                        <div class="col-md-2 text-right">User</div>
-                    </div>
-                </td>
-                <th>Search Query</th>
+                <th class="col-md-2" >Date</th>
+                <th class="col-md-2" >User</th>
+                <th class="col-md-8" >SearchQuery</th>
             </tr>
         </thead>
         <tbody>
             {% for query in search_queries %}
             <tr>
-                <td>
-                    <div class="row">
-                        <div class="col-md-6 text-left">{{ query.timestamp }}</div>
-                        <div class="col-md-2 text-right">{{ query.email }}</div>
-                    </div>
-                </td>
-                <td style="width: 50%;">{{ query.search_query }}</td>
+                <td  class="col-md-2" >{{ query.timestamp }}</td>
+                <td  class="col-md-2" >{{ query.email }}</td>
+                
+                <td class="col-md-8">{{ query.search_query }}</td>
             </tr>
             {% endfor %}
         </tbody>
