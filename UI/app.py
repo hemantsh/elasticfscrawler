@@ -23,7 +23,7 @@ host = os.getenv('ELASTIC_HOST')
 indexName = os.getenv('INDEX_NAME')
 db_user = os.getenv('DB_USER')
 db_pass = os.getenv('DB_PASSWORD')
-country_list = load_countries()
+country_list = None
 
 app = Flask(__name__)
 
@@ -122,6 +122,7 @@ def register():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
+        country_list = load_countries()
         email = request.form['email']
         password = request.form['password']
 
