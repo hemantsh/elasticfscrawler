@@ -1,11 +1,12 @@
-Flask == 2.3.2
+Flask
 Elasticsearch == 8.8.0
-python-dotenv 
-Flask-Login==0.5.3
-Flask-SQLAlchemy==2.5.1
-Flask-Bcrypt==0.7.1
-pycountry==20.7.3
-flask-login==0.5.3
-flask_sqlalchemy==2.5.1
-flask_bcrypt==0.7.1
- 
+python-dotenv
+Flask-Login
+Flask-SQLAlchemy
+Flask-Bcrypt
+pycountry
+flask-login
+flask_sqlalchemy
+flask_bcrypt
+pymysql
+cryptography

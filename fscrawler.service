@@ -1,0 +1,16 @@
+[Unit]
+Description=FSCrawler Service that scans the files for indexing
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/home/searchengine/elasticfscrawler/fscrawler/fscrawler-distribution-2.10-SNAPSHOT/bin/fscrawler --username elastic --config_dir /home/searchengine/elasticfscrawler/fscrawler/fscrawler-distribution-2.10-SNAPSHOT/bin/fscrawler/config cases restart
+
+WorkingDirectory=/home/searchengine/elasticfscrawler/fscrawler/fscrawler-distribution-2.10-SNAPSHOT/bin
+Restart=always
+RestartSec=5
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=%n

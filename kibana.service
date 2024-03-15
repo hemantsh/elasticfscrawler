@@ -1,0 +1,15 @@
+[Unit]
+Description=Starts Kibana docker container on startup and keep running.
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=docker-compose start kibana -d -f /home/searchengine/elasticfscrawler/docker-compose.yaml
+WorkingDirectory=/home/searchengine/elasticfscrawler
+Restart=always
+RestartSec=5
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=%n

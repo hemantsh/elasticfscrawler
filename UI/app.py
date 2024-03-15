@@ -13,9 +13,7 @@ bcrypt = Bcrypt()
 from werkzeug.security import generate_password_hash
 
 dotenv_path = Path('../.env')
-User = Path('../sql_db/create_table')
-Search = Path('../sql_db/create_table')
-db = Path('../sql_db/create_table')
+
 load_dotenv(dotenv_path=dotenv_path)
 
 dir = os.getenv('FLASK_APP_DIR')
@@ -23,10 +21,12 @@ user = os.getenv('ELASTIC_USER')
 password = os.getenv('ELASTIC_PASSWORD')
 host = os.getenv('ELASTIC_HOST')
 indexName = os.getenv('INDEX_NAME')
+db_user = os.getenv('DB_USER')
+db_pass = os.getenv('DB_PASSWORD')
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:RKKanika_SinghalBiz4_@127.0.0.1/elasticsearch27' 
+app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{db_pass}@localhost/cases' 
 es = Elasticsearch(host,basic_auth=(user,password),verify_certs=False)
 db = SQLAlchemy(app)
 
@@ -103,7 +103,7 @@ def register():
             db.session.add(new_user)
             db.session.commit()
             flash('User registered successfully with email: {}'.format(email), 'success')
-            return redirect(url_for('login'))
+            return render_template('register.html', create_user=create_user, countries=country_list)
 
         if current_user.is_authenticated:
             current_user.email = email
@@ -157,30 +157,28 @@ def search():
             db.session.add(new_search)
             db.session.commit()
         else:
-            flash('Search query cannot be empty.', 'danger')
-
-        searches = Search.query.filter_by(email=current_user.email).order_by(Search.timestamp.desc()).all()  
-        return render_template('results.html', searches=searches, input=search_query)
-    return redirect(url_for('home'))
-
-
+            flash('Search query cannot be empty.', 'danger') 
+            return render_template('results.html', input=search_query, res=None)       
+    
     # Perform Elasticsearch search
-    # res = es.search(
-    #     index=indexName,
-    #     body={
-    #         "query": {"match_phrase": {"content": {"query": search_query, "slop": 1}}},
-    #         "size": 500,
-    #         "highlight": {"pre_tags": ['<b>'], "post_tags": ["</b>"], "fields": {"content": {}}}
-    #     })
+    res = es.search(
+          index=indexName,
+          body={
+              "query": {"match_phrase": {"content": {"query": search_query, "slop": 1}}},
+              "size": 500,
+              "highlight": {"pre_tags": ['<b>'], "post_tags": ["</b>"], "fields": {"content": {}}}
+          })
 
-    # # Process search results
-    # for hit in res['hits']['hits']:
-    #     hit['good_summary'] = '….'.join(hit['highlight']['content'][1:])
-    #     hit['virtual'] = hit['_source']['path']['virtual']
-    #     tokens = hit['_source']['path']['real'].split("/")
-    #     hit['year'] = tokens[1]
-    #     hit['case'] = tokens[2]
-    #     hit['_source']['content'] = ""
+     # Process search results
+    for hit in res['hits']['hits']:
+         hit['good_summary'] = '….'.join(hit['highlight']['content'][1:])
+         hit['virtual'] = hit['_source']['path']['virtual']
+         tokens = hit['_source']['path']['real'].split("/")
+         hit['year'] = tokens[1]
+         hit['case'] = tokens[2]
+         hit['_source']['content'] = ""
+
+    return render_template('results.html', input=search_query, res=res)
 
 
 @app.route('/home/')
@@ -195,7 +193,7 @@ def home():
 def report():
     if request.method == 'POST':
         start_date = datetime.strptime(request.form['start_date'], '%Y-%m-%d')
-        end_date = datetime.strptime(request.form['end_date'], '%Y-%m-%d')
+        end_date = datetime.strptime(request.form['end_date'], '%Y-%m-%d').replace(hour=23, minute=59)
         search_queries = Search.query.filter(Search.timestamp >= start_date, Search.timestamp <= end_date , Search.activity_type == 'SEARCH').all()
         search_results = []
         for query in search_queries:
@@ -206,6 +204,10 @@ def report():
             })
         if len(search_results) <= 0:
             flash ( "No results founds for entered criteria", "danger")
+
+        start_date = start_date.date()
+        end_date = end_date.date()
+
         return render_template('report.html', search_queries=search_results, start_date=start_date, end_date=end_date  )
     else:
         return render_template('report.html', search_queries=[], start_date='', end_date='')
@@ -213,7 +215,12 @@ def report():
  
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()  
+        db.create_all() 
+        #new_user = User(email='admin@crimelab.com', displayname='Admin', countries='', is_admin = True)
+        #new_user.set_password('caseAppAdmin')
+        #db.session.add(new_user)
+        #db.session.commit()
+
     app.secret_key = 'supersecretkey' 
     app.run('127.0.0.1', debug=True)
     

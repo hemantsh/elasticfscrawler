@@ -1,0 +1,15 @@
+[Unit]
+Description=Starts python flask UI app on startup and keep running.
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=docker-python3 /home/searchengine/elasticfscrawler/UI/searchengine.py 
+WorkingDirectory=/home/searchengine/elasticfscrawler/UI
+Restart=always
+RestartSec=5
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=%n
