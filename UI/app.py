@@ -25,6 +25,7 @@ db_user = os.getenv('DB_USER')
 db_pass = os.getenv('DB_PASSWORD')
 country_list = None
 
+
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{db_pass}@localhost/cases' 
@@ -121,6 +122,7 @@ def register():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+
     if request.method == 'POST':
         country_list = load_countries()
         email = request.form['email']
@@ -132,6 +134,10 @@ def login():
             new_search = Search(email=user.email, search_query='login', activity_type = 'LOGIN')
             db.session.add(new_search)
             db.session.commit()
+            count = es.count(index=f"{indexName}")["count"]
+            current_user.count = count
+            print(current_user.count)
+
             return redirect(url_for('home'))
         else:
             flash('Invalid email or password. Please try again.', 'danger')
@@ -150,7 +156,7 @@ def logout():
 @app.route('/search/results', methods=['POST'])
 @login_required
 def search():
-    print(f'Total records in Elastic index : {es.count()}')
+    
     if request.method == 'POST':
         search_query = request.form['input']
         if search_query.strip():  
