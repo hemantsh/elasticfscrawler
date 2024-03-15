@@ -14,13 +14,13 @@
                     <div class="col col-md-2"><a href="{{ url_for('report') }}" class="link-light">Report</a></div>                  
                     <div class="col col-md-2"><a href="{{ url_for('register') }}" class="link-light">Profile</a></div>
                     <div class="col col-md-2"><a href="{{ url_for('logout') }}" class="link-light">Logout</a></div>
-                    <div class="col col-md-1">{{ current_user.count }}</div>
+                    <div class="col col-md-1"  class="link-light">Total: {{ current_user.count }}</div>
                 {% else %}
                     <div></div>
                     <div class="col col-md-2"><a href="{{ url_for('register') }}" class="link-light">Profile</a></div>
                     <div class="col col-md-2"><a href="{{ url_for('home') }}" class="link-light">Search</a></div>
                     <div class="col col-md-2"><a href="{{ url_for('logout') }}" class="link-light">Logout</a></div>
-                    <div class="col col-md-1">{{ current_user.count }}</div>
+                    <div class="col col-md-1"  class="link-light">Total: {{ current_user.count }}</div>
                 {% endif %}
             {% endif %}
         </div>
