@@ -64,7 +64,13 @@ login_manager.init_app(app)
 
 @login_manager.user_loader
 def load_user(user_id): 
-   return User.query.get(int(user_id))
+   user = User.query.get(int(user_id))
+    
+   count = es.count(index=f"{indexName}")["count"]
+   current_user.count = count
+   user.count = count
+   print(current_user.count)
+   return user
 
 @app.route('/')
 def index():
@@ -134,9 +140,7 @@ def login():
             new_search = Search(email=user.email, search_query='login', activity_type = 'LOGIN')
             db.session.add(new_search)
             db.session.commit()
-            count = es.count(index=f"{indexName}")["count"]
-            current_user.count = count
-            print(current_user.count)
+            
 
             return redirect(url_for('home'))
         else:
