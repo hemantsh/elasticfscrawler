@@ -191,7 +191,7 @@ function drawChart(index, caseid, dataset) {
 
 function configurerReportTable() {
     
-    $('#searchQueriesTable').DataTable({
+    $('#results').DataTable({
         "columnDefs": [
             {
                 "targets": 'no-sort',

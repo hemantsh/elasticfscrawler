@@ -78,19 +78,19 @@
             <th class="col-md-1">key</th>
         </tr>
     </thead>
-</table>
-<tbody>
-    {% for hit in res['hits']['hits'] %}
-    <tr>
-        <td class="col-md-1">{{ hit['year'] }}</td>
-        <td class="col-md-1">{{ hit['case'] }}</td>
-        <td class="col-md-7" id="{{loop.index}}" name="goodSummary"> {{ hit['good_summary']}} </td>
-        <td class="col-md-1"> {{ hit['virtual'] }} </td>
-        <td class="col-md-1">{{ hit['_source']['file']['filesize'] }}</td>
-        <td class="col-md-1">{{ hit['case'] }}###{{ hit['virtual'] }}</td>
-    </tr>
-    {% endfor %}
-</tbody>
+
+    <tbody>
+        {% for hit in res['hits']['hits'] %}
+        <tr>
+            <td class="col-md-1">{{ hit['year'] }}</td>
+            <td class="col-md-1">{{ hit['case'] }}</td>
+            <td class="col-md-7" id="{{loop.index}}" name="goodSummary"> {{ hit['good_summary']}} </td>
+            <td class="col-md-1"> {{ hit['virtual'] }} </td>
+            <td class="col-md-1">{{ hit['_source']['file']['filesize'] }}</td>
+            <td class="col-md-1">{{ hit['case'] }}###{{ hit['virtual'] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
 
 
 </table>
