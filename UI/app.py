@@ -67,9 +67,8 @@ def load_user(user_id):
    user = User.query.get(int(user_id))
     
    count = es.count(index=f"{indexName}")["count"]
-   current_user.count = count
    user.count = count
-   print(current_user.count)
+   print(user.count)
    return user
 
 @app.route('/')
