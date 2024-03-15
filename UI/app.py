@@ -184,7 +184,7 @@ def search():
     for hit in res['hits']['hits']:
          hit['good_summary'] = '….'.join(hit['highlight']['content'][1:])
          hit['virtual'] = hit['_source']['path']['virtual']
-         tokens = hit['_source']['path']['real'].split("/")
+         tokens = hit['virtual'].split("/")
          hit['year'] = tokens[1]
          hit['case'] = tokens[2]
          hit['_source']['content'] = ""
