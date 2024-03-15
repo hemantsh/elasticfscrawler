@@ -23,6 +23,7 @@ host = os.getenv('ELASTIC_HOST')
 indexName = os.getenv('INDEX_NAME')
 db_user = os.getenv('DB_USER')
 db_pass = os.getenv('DB_PASSWORD')
+country_list = load_countries()
 
 app = Flask(__name__)
 
@@ -72,7 +73,6 @@ def index():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     create_user = request.args.get('create_user')
-    country_list = load_countries()
     
     if request.method == 'POST':
         email = request.form['email']
@@ -149,6 +149,7 @@ def logout():
 @app.route('/search/results', methods=['POST'])
 @login_required
 def search():
+    print(f'Total records in Elastic index : {es.count()}')
     if request.method == 'POST':
         search_query = request.form['input']
         if search_query.strip():  
